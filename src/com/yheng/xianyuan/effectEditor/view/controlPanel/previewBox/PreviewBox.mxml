@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 width="100%" height="100" 
+		 implements="com.codeTooth.actionscript.patterns.subject.IObserver" 
+		 addedToStage="addToStageHandler(event)">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.codeTooth.actionscript.lang.exceptions.IllegalOperationException;
+			import com.codeTooth.actionscript.lang.utils.Align;
+			import com.codeTooth.actionscript.patterns.subject.INofityData;
+			import com.yheng.xianyuan.effectEditor.command.CommandID;
+			import com.yheng.xianyuan.effectEditor.command.GetEffectTemplateCommandData;
+			import com.yheng.xianyuan.effectEditor.core.Mediator;
+			import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
+			import com.yheng.xianyuan.effectEditor.subject.PreviewEffectTemplateNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.RemoveEffectTemplateNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SubjectID;
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 初始化
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			private function addToStageHandler(event:Event):void
+			{
+				Mediator.subjects.followSubject(this, SubjectID.PREVIEW_EFFECT_TEMPLATE);
+				Mediator.subjects.followSubject(this, SubjectID.REMOVE_EFFECT_TEMPLATE);
+				initializeCanvas();
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// Canvas
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			private var _canvas:Bitmap = null;
+			
+			private function initializeCanvas():void
+			{
+				_canvas = new Bitmap(new BitmapData(width, height, true, 0x00000000));
+				container.addChild(_canvas);
+				clearCanvas();
+			}
+			
+			private function clearCanvas():void
+			{
+				_canvas.bitmapData.fillRect(_canvas.bitmapData.rect, 0x00000000);
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 实现 IObserver 接口
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			public function update(data:INofityData=null):void
+			{
+				switch(data.getSubjectID())
+				{
+					case SubjectID.PREVIEW_EFFECT_TEMPLATE:
+					{
+						preview(PreviewEffectTemplateNotifyData(data));
+						break;
+					}
+						
+					case SubjectID.REMOVE_EFFECT_TEMPLATE:
+					{
+						removeEffectData(RemoveEffectTemplateNotifyData(data));
+						break;
+					}
+						
+					default:
+					{
+						throw new IllegalOperationException();
+						break;
+					}
+				}
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 逻辑代码
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			private var _currPrevEffectDataID:Number = 0;
+			
+			private function preview(data:PreviewEffectTemplateNotifyData):void
+			{
+				var effectData:EffectTemplateData = Mediator.commands.executeCommand(CommandID.GET_EFFECT_TEMPLATE, new GetEffectTemplateCommandData(data.effectTemplateID));
+				var srcRect:Rectangle = new Rectangle(0, 0, effectData.bitmapData.width, effectData.bitmapData.height);
+				var destRect:Rectangle = new Rectangle(0, 0, width, height);
+				var matrix:Matrix = Align.rectScaleCenterAlignByMatrix(srcRect, destRect);
+				
+				clearCanvas();
+				_canvas.bitmapData.draw(effectData.bitmapData, matrix);
+				_currPrevEffectDataID = effectData.id;
+			}
+			
+			private function removeEffectData(data:RemoveEffectTemplateNotifyData):void
+			{
+				if(data.effectTemplateData.id == _currPrevEffectDataID)
+				{
+					clearCanvas();
+					_currPrevEffectDataID = 0;
+				}
+			}
+		]]>
+	</fx:Script>
+	<s:VGroup verticalAlign="middle" horizontalAlign="center" width="100%" height="100%">
+		<s:Label text="预览窗口" fontSize="24" alpha=".1"/>
+	</s:VGroup>
+	<mx:UIComponent id="container" width="100%" height="100%"/>
+</s:Group>

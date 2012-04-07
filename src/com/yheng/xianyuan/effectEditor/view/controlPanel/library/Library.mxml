@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="250" 
+		  implements="com.codeTooth.actionscript.patterns.subject.IObserver" addedToStage="addToStageHandler(event)">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.codeTooth.actionscript.lang.exceptions.IllegalOperationException;
+			import com.codeTooth.actionscript.lang.utils.newUniqueObject.UniqueID;
+			import com.codeTooth.actionscript.patterns.subject.INofityData;
+			import com.yheng.xianyuan.effectEditor.command.AddEffectCommandData;
+			import com.yheng.xianyuan.effectEditor.command.CommandID;
+			import com.yheng.xianyuan.effectEditor.command.RemoveEffectTemplateCommandData;
+			import com.yheng.xianyuan.effectEditor.core.Mediator;
+			import com.yheng.xianyuan.effectEditor.subject.AddEffectTemplateNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.PreviewEffectTemplateNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.RemoveEffectTemplateNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SubjectID;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			
+			import spark.events.IndexChangeEvent;
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 初始化
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			private function addToStageHandler(event:Event):void
+			{
+				Mediator.subjects.followSubject(this, SubjectID.ADD_EFFECT_TEMPLATE);
+				Mediator.subjects.followSubject(this, SubjectID.REMOVE_EFFECT_TEMPLATE);
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 实现 IObserver 接口
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			public function update(data:INofityData=null):void
+			{
+				switch(data.getSubjectID())
+				{
+					case SubjectID.ADD_EFFECT_TEMPLATE:
+					{
+						addEffectTemplate(AddEffectTemplateNotifyData(data));
+						break;
+					}
+						
+					case SubjectID.REMOVE_EFFECT_TEMPLATE:
+					{
+						removeEffectTemplate(RemoveEffectTemplateNotifyData(data))
+						break;
+					}
+						
+					default:
+					{
+						throw new IllegalOperationException();
+						break;
+					}
+				}
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 逻辑代码
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			private function addEffectTemplateHandler(event:MouseEvent):void
+			{
+				Mediator.subjects.notifySubject(SubjectID.SHOW_IMPORT_EFFECT_WINDOW);
+			}
+			
+			private function removeEffectTemplateHadnler(event:MouseEvent):void
+			{
+				if(list.selectedItem == null)
+				{
+					Alert.show("请选择需要删除的特效");
+					return;
+				}
+				
+				var item:LibraryItemData = list.selectedItem;
+				Mediator.commands.executeCommand(CommandID.REMOVE_EFFECT_TEMPLATE, new RemoveEffectTemplateCommandData(item.effectTemplateID));
+			}
+			
+			// List
+			[Bindable]
+			private var _listData:ArrayCollection = new ArrayCollection();
+			
+			private function addEffectTemplate(data:AddEffectTemplateNotifyData):void
+			{
+				_listData.addItem(new LibraryItemData(data.effectTemplateData.name, data.effectTemplateData.id));
+			}
+			
+			private function removeEffectTemplate(data:RemoveEffectTemplateNotifyData):void
+			{
+				var index:int = 0;
+				for each(var listItem:LibraryItemData in _listData)
+				{
+					if(listItem.effectTemplateID == data.effectTemplateData.id)
+					{
+						_listData.removeItemAt(index);
+						return;
+					}
+					index++;
+				}
+			}
+			
+			private function listItemChangeHandler(event:IndexChangeEvent):void
+			{
+				var itemData:LibraryItemData = list.selectedItem;
+				Mediator.subjects.notifySubject(SubjectID.PREVIEW_EFFECT_TEMPLATE, new PreviewEffectTemplateNotifyData(itemData.effectTemplateID));
+			}
+			
+			private function addEffectHandler(event:MouseEvent):void
+			{
+				if(list.selectedItem == null)
+				{
+					Alert.show("请选择要添加到工作区的特效");
+					return;
+				}
+				
+				var item:LibraryItemData = list.selectedItem;
+				Mediator.commands.executeCommand(CommandID.ADD_EFFECT, new AddEffectCommandData(item.effectTemplateID, UniqueID.getUniqueID(), 0, 0, 0, 0));
+			}
+			
+			private function removeEffectHandler(event:MouseEvent):void
+			{
+				Mediator.subjects.notifySubject(SubjectID.REMOVE_EFFECT_PREPARE);
+			}
+		]]>
+	</fx:Script>
+	<s:List width="100%" height="100%" id="list" dataProvider="{_listData}" change="listItemChangeHandler(event)"/>
+	<s:HGroup>
+		<s:Button id="addEffectBtn" label="(-" width="30" height="28" click="addEffectHandler(event)"/>
+		<s:Button id="removeEffectBtn" label="-)" width="30" height="28" click="removeEffectHandler(event)"/>
+		<s:Button id="addEffectTemplateBtn" label="+" width="28" height="28" click="addEffectTemplateHandler(event)"/>
+		<s:Button id="removeEffectTemplateBtn" label="-" width="28" height="28" click="removeEffectTemplateHadnler(event)"/>
+	</s:HGroup>
+</s:VGroup>

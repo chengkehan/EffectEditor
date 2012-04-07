@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 width="100%" height="100%" 
+		 implements="com.codeTooth.actionscript.patterns.subject.IObserver" addedToStage="addToStageHandler(event)">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.codeTooth.actionscript.lang.exceptions.IllegalOperationException;
+			import com.codeTooth.actionscript.lang.utils.Common;
+			import com.codeTooth.actionscript.lang.utils.FileUtil;
+			import com.codeTooth.actionscript.patterns.subject.INofityData;
+			import com.yheng.xianyuan.effectEditor.command.CommandID;
+			import com.yheng.xianyuan.effectEditor.command.GetEffectCommandData;
+			import com.yheng.xianyuan.effectEditor.command.SetAssistantPointVisibleCommandData;
+			import com.yheng.xianyuan.effectEditor.command.SetEffectEmptyFramesCommandData;
+			import com.yheng.xianyuan.effectEditor.command.SetFPSCommandData;
+			import com.yheng.xianyuan.effectEditor.command.SetNameCommandData;
+			import com.yheng.xianyuan.effectEditor.command.SetPlayingCommandData;
+			import com.yheng.xianyuan.effectEditor.command.SetReferenceObjectCommandData;
+			import com.yheng.xianyuan.effectEditor.command.SetWorkspaceColorCommandData;
+			import com.yheng.xianyuan.effectEditor.core.Mediator;
+			import com.yheng.xianyuan.effectEditor.data.EffectData;
+			import com.yheng.xianyuan.effectEditor.subject.RemoveEffectNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SelectEffectNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SetAssistantPointVisibleNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SetNameNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SetWorkspaceColorNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SubjectID;
+			
+			import mx.controls.Alert;
+			import mx.events.ColorPickerEvent;
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 初始化
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			private function addToStageHandler(event:Event):void
+			{
+				Mediator.subjects.followSubject(this, SubjectID.SET_WORKSPACE_COLOR);
+				Mediator.subjects.followSubject(this, SubjectID.SELECT_EFFECT);
+				Mediator.subjects.followSubject(this, SubjectID.UNSELECT_EFFECT);
+				Mediator.subjects.followSubject(this, SubjectID.REMOVE_EFFECT);
+				Mediator.subjects.followSubject(this, SubjectID.SET_ASSISTANT_POINT_VISIBLE);
+				Mediator.subjects.followSubject(this, SubjectID.SET_NAME);
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 实现 IObserver 接口
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			public function update(data:INofityData=null):void
+			{
+				switch(data.getSubjectID())
+				{
+					case SubjectID.SET_WORKSPACE_COLOR:
+					{
+						setWorkspaceColor(SetWorkspaceColorNotifyData(data));
+						break;
+					}
+						
+					case SubjectID.SELECT_EFFECT:
+					{
+						selectEffect(SelectEffectNotifyData(data));
+						break;
+					}
+						
+					case SubjectID.UNSELECT_EFFECT:
+					{
+						unselectEffect();
+						break;
+					}
+						
+					case SubjectID.REMOVE_EFFECT:
+					{
+						removeEffect(RemoveEffectNotifyData(data));
+						break;
+					}
+						
+					case SubjectID.SET_ASSISTANT_POINT_VISIBLE:
+					{
+						setAssistantPointVisible(SetAssistantPointVisibleNotifyData(data));
+						break;
+					}
+						
+					case SubjectID.SET_NAME:
+					{
+						setName(SetNameNotifyData(data));
+						break;
+					}
+						
+					default:
+					{
+						throw new IllegalOperationException();
+						break;
+					}
+				}
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 逻辑代码
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			// 工作区颜色
+			private function workspaceColorChangeHandler(event:ColorPickerEvent):void
+			{
+				Mediator.commands.executeCommand(CommandID.SET_WORKSPACE_COLOR, new SetWorkspaceColorCommandData(event.color));
+			}
+			
+			private function setWorkspaceColor(data:SetWorkspaceColorNotifyData):void
+			{
+				colorPicker.selectedColor = data.color
+			}
+			
+			// 动画播放暂停
+			private function stopHandler(event:MouseEvent):void
+			{
+				Mediator.commands.executeCommand(CommandID.SET_PLAYING, new SetPlayingCommandData(false));
+			}
+			
+			private function playHandler(event:MouseEvent):void
+			{
+				Mediator.commands.executeCommand(CommandID.SET_PLAYING, new SetPlayingCommandData(true));
+			}
+			
+			// Effect
+			private function removeEffect(data:RemoveEffectNotifyData):void
+			{
+				if(data.effectData.id == _selectEffectID)
+				{
+					_selectEffectID = -1;
+				}
+			}
+			
+			private var _selectEffectID:Number = -1;
+			private function selectEffect(data:SelectEffectNotifyData):void
+			{
+				_selectEffectID = data.effectID;
+				var effectData:EffectData = Mediator.commands.executeCommand(CommandID.GET_EFFECT, new GetEffectCommandData(data.effectID));
+				framesInput.text = String(Mediator.clipsDataManager.getClipsData(effectData.templateID).length);
+				emptyFramesPrefixInput.text = String(effectData.emptyFramesPrefix);
+				emptyFramesSuffixInput.text = String(effectData.emptyFramesSuffix);
+			}
+			private function unselectEffect():void
+			{
+				_selectEffectID = -1;
+				emptyFramesPrefixInput.text = "0";
+				emptyFramesSuffixInput.text = "0";
+				framesInput.text = "0";
+			}
+			
+			// 空帧
+			private function setEmptyFramesHandler(event:MouseEvent):void
+			{
+				if(Mediator.commands.executeCommand(CommandID.GET_PLAYING))
+				{
+					Alert.show("请先暂停特效的播放，然后进行设置");
+					return;
+				}
+				
+				if(_selectEffectID == -1)
+				{
+					Alert.show("请在工作区选择要设定的特效");
+					return;
+				}
+				
+				Mediator.commands.executeCommand(
+					CommandID.SET_EFFECT_EMPTY_FRAMES, 
+					new SetEffectEmptyFramesCommandData(_selectEffectID, int(emptyFramesPrefixInput.text), int(emptyFramesSuffixInput.text))
+				);
+			}
+			
+			// 辅助点
+			private function assistantPointHandler(event:Event):void
+			{
+				Mediator.commands.executeCommand(CommandID.SET_ASSISTANT_POINT_VISIBLE, new SetAssistantPointVisibleCommandData(assistantPointVisibleCbx.selected));
+			}
+			
+			private function setAssistantPointVisible(data:SetAssistantPointVisibleNotifyData):void
+			{
+				assistantPointVisibleCbx.selected = data.visible;
+			}
+			
+			// FPS
+			private function fpsChangeHandler(event:MouseEvent):void
+			{
+				Mediator.commands.executeCommand(CommandID.SET_FPS, new SetFPSCommandData(fps.value));
+			}
+			
+			// 特效名字
+			private function setName(data:SetNameNotifyData):void
+			{
+				nameInput.text = data.name;
+			}
+			
+			private function setNameHandler(event:MouseEvent):void
+			{
+				Mediator.commands.executeCommand(CommandID.SET_NAME, new SetNameCommandData(nameInput.text));
+			}
+			
+			// 参照物
+			private function setReferenceObjectHandler(event:MouseEvent):void
+			{
+				FileUtil.createFileStatic("refObjeFile", true, selectRefObjectHandler).
+					browseForOpen("选择参照物图片", [FileUtil.getFileFilterPNG(), FileUtil.getFileFileterJPG()]);
+			}
+			
+			private function clearReferenceObjectHandler(event:MouseEvent):void
+			{
+				Mediator.commands.executeCommand(CommandID.CLEAR_REFERENCE_OBJECT);
+			}
+			
+			private function selectRefObjectHandler():void
+			{
+				var file:File = FileUtil.getFileStatic("refObjeFile");
+				var stream:FileStream = null;
+				var bytes:ByteArray = null;
+				try
+				{
+					bytes = new ByteArray();
+					stream = new FileStream();
+					stream.open(file, FileMode.READ);
+					stream.readBytes(bytes);
+				} 
+				catch(error:Error) 
+				{
+					Alert.show(error.message, "打开文件时发生异常");
+					return;
+				}
+				finally
+				{
+					if(stream != null)
+					{
+						stream.close();
+					}
+				}
+				
+				Mediator.commands.executeCommand(CommandID.SET_REFERENCE_OBJECT, new SetReferenceObjectCommandData(bytes));
+			}
+			
+		]]>
+	</fx:Script>
+	<s:HGroup verticalAlign="middle">
+		<s:Label text="名称："/>
+		<s:TextInput id="nameInput" width="150"/>
+		<s:Button label="确定" width="45" click="setNameHandler(event)"/>
+	</s:HGroup>
+	<mx:HRule width="100%"/>
+	<s:HGroup verticalAlign="middle">
+		<s:Label text="参照物:"/>
+		<s:Button width="45" label="设定" click="setReferenceObjectHandler(event)"/>
+		<s:Button width="45" label="清除" click="clearReferenceObjectHandler(event)"/>
+	</s:HGroup>
+	<mx:HRule width="100%"/>
+	<s:HGroup width="100%" verticalAlign="middle">
+		<s:Label text="工作区背景色："/>
+		<mx:ColorPicker id="colorPicker" change="workspaceColorChangeHandler(event)"/>
+	</s:HGroup>
+	<s:HGroup>
+		<s:Label text="辅助点可见："/>
+		<s:CheckBox selected="true" id="assistantPointVisibleCbx" change="assistantPointHandler(event)"/>
+	</s:HGroup>
+	<mx:HRule width="100%"/>
+	<s:HGroup>
+		<s:Button label="口" width="32" height="28" click="stopHandler(event)"/>
+		<s:Button label="-)" width="30" height="28" click="playHandler(event)"/>
+	</s:HGroup>
+	<s:HGroup verticalAlign="middle">
+		<s:Label text="帧频"/>
+		<s:NumericStepper id="fps" value="30" width="100" minimum="24" maximum="60"/>
+		<s:Button label="确定" width="45" click="fpsChangeHandler(event)"/>
+	</s:HGroup>
+	<mx:HRule width="100%"/>
+	<s:HGroup>
+		<s:VGroup horizontalAlign="center">
+			<s:Label text="前插入空白帧数"/>
+			<s:TextInput id="emptyFramesPrefixInput" width="90" contentBackgroundColor="#A8DAFD" text="0" textAlign="center" restrict="0-9"/>
+		</s:VGroup>
+		<s:VGroup horizontalAlign="center">
+			<s:Label text="动画帧数"/>			
+			<s:TextInput id="framesInput" width="50" editable="false" contentBackgroundColor="0xBBBBBB" text="0" textAlign="center" selectable="false"/>
+		</s:VGroup>
+		<s:VGroup horizontalAlign="center">
+			<s:Label text="后追加空白帧数"/>
+			<s:TextInput id="emptyFramesSuffixInput" width="90" contentBackgroundColor="#A8DAFD" text="0" textAlign="center" restrict="0-9"/>
+		</s:VGroup>
+	</s:HGroup>
+	<s:Button label="确定" width="45" click="setEmptyFramesHandler(event)"/>
+</s:VGroup>

@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:UIComponent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				width="100%" height="100%" 
+				addedToStage="addToStageHandler(event)" 
+				resize="resizeHandler(event)" 
+				implements="com.codeTooth.actionscript.patterns.subject.IObserver, com.codeTooth.actionscript.lang.utils.newLoop.ISubLoop">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.codeTooth.actionscript.display.Box;
+			import com.codeTooth.actionscript.game.action.ActionData;
+			import com.codeTooth.actionscript.interaction.drag.ISimpleDragable;
+			import com.codeTooth.actionscript.interaction.drag.SimpleDragManager;
+			import com.codeTooth.actionscript.interaction.selection.SimpleSelectionManager;
+			import com.codeTooth.actionscript.interaction.selection.SimpleSelectionManagerEvent;
+			import com.codeTooth.actionscript.lang.exceptions.IllegalOperationException;
+			import com.codeTooth.actionscript.patterns.subject.INofityData;
+			import com.yheng.xianyuan.effectEditor.command.CommandID;
+			import com.yheng.xianyuan.effectEditor.command.MoveReferenceObjectCommandData;
+			import com.yheng.xianyuan.effectEditor.command.RemoveEffectCommandData;
+			import com.yheng.xianyuan.effectEditor.command.SetEffectOrigionCommandData;
+			import com.yheng.xianyuan.effectEditor.core.Mediator;
+			import com.yheng.xianyuan.effectEditor.data.ReferenceObjectData;
+			import com.yheng.xianyuan.effectEditor.subject.AddEffectNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.MoveReferenceObjectNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.RemoveEffectNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SelectEffectNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SetAssistantPointVisibleNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SetEffectEmptyFramesNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SetFPSNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SetReferenceObjectNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SetWorkspaceColorNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SubjectID;
+			
+			import mx.controls.Alert;
+			import mx.events.ResizeEvent;
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 实现 IObserver 接口
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			public function update(data:INofityData=null):void
+			{
+				switch(data.getSubjectID())
+				{
+					case SubjectID.ADD_EFFECT:
+					{
+						addEffect(AddEffectNotifyData(data));
+						break;
+					}
+						
+					case SubjectID.REMOVE_EFFECT:
+					{
+						removeEffect(RemoveEffectNotifyData(data));
+						break;
+					}
+					
+					case SubjectID.REMOVE_EFFECT_PREPARE:
+					{
+						removeEffectPrepare();
+						break;
+					}
+						
+					case SubjectID.SET_WORKSPACE_COLOR:
+					{
+						setWorkspaceColor(SetWorkspaceColorNotifyData(data));
+						break;
+					}
+						
+					case SubjectID.SET_EFFECT_EMPTY_FRAMES:
+					{
+						setEffectEmptyFrames(SetEffectEmptyFramesNotifyData(data));
+						break;
+					}
+						
+					case SubjectID.SET_ASSISTANT_POINT_VISIBLE:
+					{
+						assistantPointVisible(SetAssistantPointVisibleNotifyData(data));
+						break;
+					}
+						
+					case SubjectID.SET_FPS:
+					{
+						setFPS(SetFPSNotifyData(data))
+						break;
+					}
+						
+					case SubjectID.SET_REFERENCE_OBJECT:
+					{
+						setReferenceObject(SetReferenceObjectNotifyData(data));
+						break;
+					}
+						
+					case SubjectID.CLEAR_REFERENCE_OBJECT:
+					{
+						clearReferenceObject()
+						break;
+					}
+						
+					case SubjectID.MOVE_REFERENCE_OBJECT:
+					{
+						moveReferenceObject(MoveReferenceObjectNotifyData(data));
+						break;
+					}
+					
+					default:
+					{
+						throw new IllegalOperationException();
+						break;
+					}
+				}
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 实现 ISubLoop 接口
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			public function get canEnter():Boolean
+			{
+				return true;
+			}
+
+			public function get canExit():Boolean
+			{
+				return false;
+			}
+
+			public function loop(prevTime:int, currTime:int):void
+			{
+				if(Mediator.commands.executeCommand(CommandID.GET_PLAYING))
+				{
+					playEffects();
+				}
+				else
+				{
+					stopEffects();
+				}
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 初始化
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			private function addToStageHandler(event:Event):void
+			{
+				initializeBg();
+				initializeContainer();
+				initializeCenterCross();
+				initializeEffects();
+				initializeDragManager();
+				Mediator.mainLoop.addSubLoop(this);
+				Mediator.subjects.followSubject(this, SubjectID.ADD_EFFECT);
+				Mediator.subjects.followSubject(this, SubjectID.REMOVE_EFFECT);
+				Mediator.subjects.followSubject(this, SubjectID.REMOVE_EFFECT_PREPARE);
+				Mediator.subjects.followSubject(this, SubjectID.SET_WORKSPACE_COLOR);
+				Mediator.subjects.followSubject(this, SubjectID.SET_EFFECT_EMPTY_FRAMES);
+				Mediator.subjects.followSubject(this, SubjectID.SET_ASSISTANT_POINT_VISIBLE);
+				Mediator.subjects.followSubject(this, SubjectID.SET_FPS);
+				Mediator.subjects.followSubject(this, SubjectID.SET_REFERENCE_OBJECT);
+				Mediator.subjects.followSubject(this, SubjectID.CLEAR_REFERENCE_OBJECT);
+				Mediator.subjects.followSubject(this, SubjectID.MOVE_REFERENCE_OBJECT);
+			}
+			
+			private function resizeHandler(event:ResizeEvent):void
+			{
+				resizeBg();
+				repositionCenterCross();
+				repositionEffects();
+				repositionReferenceObject();
+				if(_selectionManager != null)
+				{
+					_selectionManager.redrawBounds();
+				}
+			}
+			
+			private function setFPS(data:SetFPSNotifyData):void
+			{
+				stage.frameRate = data.fps;
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 背景
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			private var _bg:Box = null;
+			
+			private function initializeBg():void
+			{
+				_bg = new Box(width, height, 0x000000);
+				addChild(_bg);
+				resizeBg();
+			}
+			
+			private function resizeBg():void
+			{
+				if(_bg != null)
+				{
+					_bg.width = width;
+					_bg.height = height;
+				}
+			}
+			
+			private function setWorkspaceColor(data:SetWorkspaceColorNotifyData):void
+			{
+				_bg.color = data.color;
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 容器
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			private var _container:Sprite = null;
+			
+			private function initializeContainer():void
+			{
+				_container = new Sprite();
+				addChild(_container);
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// 中心点
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			private var _centerCross:CenterCross = null;
+			
+			private function initializeCenterCross():void
+			{
+				_centerCross = new CenterCross();
+				_container.addChild(_centerCross);
+				repositionCenterCross();
+			}
+			
+			private function repositionCenterCross():void
+			{
+				if(_centerCross != null)
+				{
+					_centerCross.x = width * .5;
+					_centerCross.y = height * .5;
+				}
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// DragManager
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			private var _dragManager:SimpleDragManager = null;
+			
+			private var _selectionManager:SimpleSelectionManager = null;
+			
+			private function initializeDragManager():void
+			{
+				_dragManager = new SimpleDragManager(this, true);
+				_dragManager.setPositionDragableObject(dragEffect);
+				
+				_selectionManager = new SimpleSelectionManager(this);
+				_selectionManager.boundsColor = 0xFFFFFF;
+				_selectionManager.addEventListener(SimpleSelectionManagerEvent.SELECT_OBJECT, selectEffectHandler);
+				_selectionManager.addEventListener(SimpleSelectionManagerEvent.UNSELECT_OBJECT, unselectEffectHandler)
+			}
+			
+			private function dragEffect(x:int, y:int, target:ISimpleDragable):void
+			{
+				if(target is Effect)
+				{
+					var effect:Effect = Effect(target);
+					var origX:int = _centerCross.x - x;
+					var origY:int = _centerCross.y - y;
+					Mediator.commands.executeCommand(
+						CommandID.SET_EFFECT_ORIGION, 
+						new SetEffectOrigionCommandData(effect.id, origX, origY)
+					);
+					effect.x = x;
+					effect.y = y;
+					effect.getAction().getActionData().origionX = origX;
+					effect.getAction().getActionData().origionY = origY;
+					effect.getAction().refreshClip();
+				}
+				else if(target is ReferenceObject)
+				{
+					var refObject:ReferenceObject = ReferenceObject(target);
+					Mediator.commands.executeCommand(
+						CommandID.MOVE_REFERENCE_OBJECT, 
+						new MoveReferenceObjectCommandData(x - _centerCross.x, y - _centerCross.y)
+					);
+				}
+				else
+				{
+					// Do nothing
+				}
+			}
+			
+			private function refreshSelectionManager(effect:Effect):void
+			{
+				if(effect == _selectionManager.selectabledObject)
+				{
+					_selectionManager.redrawBounds();
+				}
+			}
+			
+			private function unselectEffect(effect:Effect):void
+			{
+				if(effect == _selectionManager.selectabledObject)
+				{
+					_selectionManager.unselectObject(true);
+				}
+			}
+			
+			private function selectEffectHandler(event:Event):void
+			{
+				var effect:Effect = Effect(_selectionManager.selectabledObject);
+				Mediator.subjects.notifySubject(SubjectID.SELECT_EFFECT, new SelectEffectNotifyData(effect.id));
+			}
+			
+			private function unselectEffectHandler(event:Event):void
+			{
+				Mediator.subjects.notifySubject(SubjectID.UNSELECT_EFFECT);
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// Effects
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			private var _effects:Vector.<Effect> = null;
+			
+			private function initializeEffects():void
+			{
+				_effects = new Vector.<Effect>();
+			}
+			
+			private function repositionEffects():void
+			{
+				for each(var effect:Effect in _effects)
+				{
+					effect.xReal = _centerCross.x;
+					effect.yReal = _centerCross.y;
+				}
+			}
+			
+			private function setEffectEmptyFrames(data:SetEffectEmptyFramesNotifyData):void
+			{
+				for each(var effect:Effect in _effects)
+				{
+					if(effect.id == data.effectData.id)
+					{
+						effect.getAction().removeAllEmptyClips();
+						effect.getAction().addEmptyClipPrefix(data.effectData.emptyFramesPrefix);
+						effect.getAction().addEmptyClipSuffix(data.effectData.emptyFramesSuffix);
+						break;
+					}
+				}
+			}
+			
+			private function assistantPointVisible(data:SetAssistantPointVisibleNotifyData):void
+			{
+				for each(var effect:Effect in _effects)
+				{
+					effect.boxVisible = data.visible;
+				}
+			}
+			
+			private function addEffect(data:AddEffectNotifyData):void
+			{
+				var effect:Effect = new Effect(
+					new ActionData(
+						data.effectData.id, Mediator.clipsDataManager.cloneClipsData(data.effectData.templateID), data.effectData.origionX, data.effectData.origionY
+					)
+				);
+				effect.getAction().addEmptyClipPrefix(data.effectData.emptyFramesPrefix);
+				effect.getAction().addEmptyClipSuffix(data.effectData.emptyFramesSuffix);
+				effect.xReal = _centerCross.x;
+				effect.yReal = _centerCross.y;
+				effect.x = _centerCross.x - data.effectData.origionX;
+				effect.y = _centerCross.y - data.effectData.origionY;
+				effect.boxVisible = Mediator.commands.executeCommand(CommandID.GET_ASSISTANT_POINT_VISIBLE);
+				addChild(effect);
+				_effects.push(effect);
+				
+				if(!Mediator.commands.executeCommand(CommandID.GET_PLAYING))
+				{
+					effect.getAction().gotoClip(0);
+					effect.getAction().refreshClip();
+				}
+			}
+			
+			private function removeEffect(data:RemoveEffectNotifyData):void
+			{
+				var index:int = 0;
+				for each(var effect:Effect in _effects)
+				{
+					if(effect.id == data.effectData.id)
+					{
+						_effects.splice(index, 1);
+						effect.destroy();
+						unselectEffect(effect);
+						removeChild(effect);
+						return;
+					}
+					index++;
+				}
+			}
+			
+			private function removeEffectPrepare():void
+			{
+				if(_selectionManager.selectabledObject == null)
+				{
+					Alert.show("请在工作区选择要删除的特效");
+					return;
+				}
+				
+				var effect:Effect = Effect(_selectionManager.selectabledObject);
+				Mediator.commands.executeCommand(CommandID.REMOVE_EFFECT, new RemoveEffectCommandData(effect.id));
+			}
+			
+			private function playEffects():void
+			{
+				for each(var effect:Effect in _effects)
+				{
+					effect.getAction().refreshClip();
+					effect.getAction().nextClip();
+					refreshSelectionManager(effect);
+				}
+			}
+			
+			private function stopEffects():void
+			{
+				for each(var effect:Effect in _effects)
+				{
+					if(effect.getAction().currentClipIndex != 0)
+					{
+						effect.getAction().gotoClip(0);
+						effect.getAction().refreshClip();
+						refreshSelectionManager(effect);
+					}
+				}
+			}
+			
+			//------------------------------------------------------------------------------------------------------------------------------
+			// ReferenceObject
+			//------------------------------------------------------------------------------------------------------------------------------
+			
+			private var _loader:ReferenceObject = null;
+			
+			private function setReferenceObject(data:SetReferenceObjectNotifyData):void
+			{
+				if(_loader == null)
+				{
+					_loader = new ReferenceObject();
+				}
+				_container.addChildAt(_loader, 0);
+				_loader.loadBytes(data.referenceObjectData.bytes);
+				
+				_loader.x = _centerCross.x + data.referenceObjectData.x;
+				_loader.y = _centerCross.y + data.referenceObjectData.y;
+			}
+			
+			private function repositionReferenceObject():void
+			{
+				if(_loader != null)
+				{
+					var data:ReferenceObjectData = Mediator.commands.executeCommand(CommandID.GET_REFERENCE_OBJECT);
+					_loader.x = _centerCross.x + data.x;
+					_loader.y = _centerCross.y + data.y;
+				}
+			}
+			
+			private function clearReferenceObject():void
+			{
+				if(_loader != null)
+				{
+					_loader.unloadAndStop();
+				}
+			}
+			
+			private function moveReferenceObject(data:MoveReferenceObjectNotifyData):void
+			{
+				_loader.x = _centerCross.x + data.referenceObjectData.x;
+				_loader.y = _centerCross.y + data.referenceObjectData.y;
+			}
+			
+		]]>
+	</fx:Script>
+</mx:UIComponent>

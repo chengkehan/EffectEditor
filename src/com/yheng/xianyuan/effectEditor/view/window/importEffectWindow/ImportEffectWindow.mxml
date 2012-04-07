@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="402" height="164" title="导入特效" close="closeHandler(event)">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.adobe.utils.StringUtil;
+			import com.codeTooth.actionscript.game.action.ActionUtil;
+			import com.codeTooth.actionscript.lang.utils.Common;
+			import com.codeTooth.actionscript.lang.utils.FileUtil;
+			import com.codeTooth.actionscript.lang.utils.newUniqueObject.UniqueID;
+			import com.yheng.xianyuan.effectEditor.command.AddEffectTemplateCommandData;
+			import com.yheng.xianyuan.effectEditor.command.CommandID;
+			import com.yheng.xianyuan.effectEditor.core.Mediator;
+			import com.yheng.xianyuan.effectEditor.subject.SubjectID;
+			
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			
+			private function cancelHadnler(event:MouseEvent):void
+			{
+				closeWindow();
+			}
+			
+			private function closeHandler(event:CloseEvent):void
+			{
+				closeWindow();
+			}
+			
+			private function closeWindow():void
+			{
+				Mediator.subjects.notifySubject(SubjectID.HIDE_IMPORT_EFFECT_WINDOW);
+			}
+			
+			private function sparrowXMLBrowseHandler(event:MouseEvent):void
+			{
+				FileUtil.createFileStatic("sparrowFile", true, sparrowSelectHandler).
+					browseForOpen("选择SparrowXML文件", [new FileFilter("XML", "*.xml"), new FileFilter("*", "*.*")]);
+			}
+			
+			private function sparrowSelectHandler():void
+			{
+				var file:File = FileUtil.getFileStatic("sparrowFile");
+				sparrowXMLPathInput.text = file.nativePath;
+			}
+			
+			private function pngBrowseHandler(event:MouseEvent):void
+			{
+				FileUtil.createFileStatic("pngFile", true, pngSelectHandler).
+					browseForOpen("选择PNG图片", [new FileFilter("PNG", "*.png"), new FileFilter("*", "*.*")]);
+			}
+			
+			private function pngSelectHandler():void
+			{
+				var file:File = FileUtil.getFileStatic("pngFile");
+				pngPathInput.text = file.nativePath;
+			}
+			
+			private function confirmHandler(event:MouseEvent):void
+			{
+				if(StringUtil.trim(sparrowXMLPathInput.text) == Common.EMPTY_STRING)
+				{
+					Alert.show("请选择SparrowXML文件");
+					return;
+				}
+				if(StringUtil.trim(pngPathInput.text) == Common.EMPTY_STRING)
+				{
+					Alert.show("请选择PNG图片文件");
+					return;
+				}
+				
+				var sparrowFile:File = null;
+				try
+				{
+					sparrowFile = new File(sparrowXMLPathInput.text);
+				} 
+				catch(error:Error) 
+				{
+					Alert.show(error.getStackTrace(), "打开SparrowXML文件时发生异常");
+					return;
+				}
+				if(!sparrowFile.exists)
+				{
+					Alert.show("指定的SparrowXML文件不存在");
+					return;
+				}
+				var pngFile:File = null;
+				try
+				{
+					pngFile = new File(pngPathInput.text);
+				} 
+				catch(error:Error) 
+				{
+					Alert.show(error.getStackTrace(), "打开PNG图片文件时发生异常");
+					return;
+				}
+				if(!pngFile.exists)
+				{
+					Alert.show("指定的PNG图片文件不存在");
+					return;
+				}
+				
+				// 读取SparrowXML文件
+				var sparrowStream:FileStream = null;
+				var sparrow:XML = null;
+				try
+				{
+					sparrowStream = new FileStream();
+					sparrowStream.open(sparrowFile, FileMode.READ);
+					var sparrowBytes:ByteArray = new ByteArray();
+					sparrowStream.readBytes(sparrowBytes);
+					sparrow = new XML(sparrowBytes.readUTFBytes(sparrowBytes.length));
+				}
+				catch(error:Error) 
+				{
+					Alert.show(error.getStackTrace(), "读取SparrowXML文件时发生异常");
+					return;
+				}
+				finally
+				{
+					if(sparrowStream != null)
+					{
+						sparrowStream.close();
+					}
+				}
+				
+				if(!ActionUtil.sparrowLegal(sparrow))
+				{
+					Alert.show("您选择的不是一个SparrowXML文件");
+					return;
+				}
+				
+				// 读取PNG图片
+				var pngStream:FileStream = null;
+				var pngBytes:ByteArray = null;
+				try
+				{
+					pngStream = new FileStream();
+					pngStream.open(pngFile, FileMode.READ);
+					pngBytes = new ByteArray();
+					pngStream.readBytes(pngBytes);
+				} 
+				catch(error:Error) 
+				{
+					Alert.show(error.getStackTrace(), "读取PNG图片时发生异常");
+					return;
+				}
+				finally
+				{
+					if(pngStream != null)
+					{
+						pngStream.close();
+					}
+				}
+				
+				Mediator.commands.executeCommand(CommandID.ADD_EFFECT_TEMPLATE, new AddEffectTemplateCommandData(UniqueID.getUniqueID(), nameInput.text, pngBytes, sparrow));
+				
+				closeWindow();
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Label x="10" y="45" text="SparrowXML："/>
+	<s:Label x="10" y="75" text="PNG图片："/>
+	<s:TextInput id="sparrowXMLPathInput" x="90" y="40" width="258"/>
+	<s:TextInput id="pngPathInput" x="90" y="70" width="258"/>
+	<s:Button id="sparrowXMLBrowseBtn" x="356" y="40" width="34" label="..." click="sparrowXMLBrowseHandler(event)"/>
+	<s:Button id="pngBrowseBtn" x="356" y="71" width="34" label="..." click="pngBrowseHandler(event)"/>
+	<s:Button id="confirmBtn" x="100" y="103" label="确定" click="confirmHandler(event)"/>
+	<s:Button id="cancelBtn" x="231" y="103" label="取消" click="cancelHadnler(event)"/>
+	<s:Label x="11" y="15" text="名称："/>
+	<s:TextInput id="nameInput" x="90" y="10" width="258" text="特效名字"/>
+</s:TitleWindow>
