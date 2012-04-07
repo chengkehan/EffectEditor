@@ -12,6 +12,7 @@ package com.yheng.xianyuan.effectEditor.command
 				new CommandItem(CommandID.REMOVE_EFFECT_TEMPLATE, new RemoveEffectTemplateCommand()), 
 				new CommandItem(CommandID.GET_EFFECT_TEMPLATE, new GetEffectTemplateCommand()), 
 				new CommandItem(CommandID.CONTAINS_EFFECT_TEMPLATE, new ContainsEffectTemplateCommand()), 
+				new CommandItem(CommandID.GET_EFFECT_TEMPLATES_ALREADY_IN_USE, new GetEffectTemplatesAlreadyInUseCommand()), 
 				new CommandItem(CommandID.ADD_EFFECT, new AddEffectCommand()), 
 				new CommandItem(CommandID.REMOVE_EFFECT, new RemoveEffectCommand()), 
 				new CommandItem(CommandID.GET_EFFECT, new GetEffectCommand()), 

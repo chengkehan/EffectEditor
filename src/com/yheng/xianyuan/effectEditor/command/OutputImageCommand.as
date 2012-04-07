@@ -3,14 +3,11 @@ package com.yheng.xianyuan.effectEditor.command
 	import com.codeTooth.actionscript.command.ICommand;
 	import com.codeTooth.actionscript.lang.utils.FileUtil;
 	import com.yheng.xianyuan.effectEditor.core.Mediator;
-	import com.yheng.xianyuan.effectEditor.core.effectEditor_internal;
-	import com.yheng.xianyuan.effectEditor.data.EffectData;
 	import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
 	
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
-	import flash.utils.Dictionary;
 	
 	import mx.controls.Alert;
 	
@@ -22,23 +19,15 @@ package com.yheng.xianyuan.effectEditor.command
 		
 		public function execute(data:Object=null):*
 		{
-			FileUtil.createFileStatic("outputImageFile", true, selectHandler).browseForSave("选择导出图片的目录");
+			FileUtil.createFileStatic("outputImageFile", true, selectHandler).browseForDirectory("选择导出图片的目录");
 		}
 		
 		private function selectHandler():void
 		{
 			var file:File = FileUtil.getFileStatic("outputImageFile");
-			var effects:Vector.<EffectData> = Mediator.data.effectEditor_internal::getEffectsData();
-			var effectTempaltes:Dictionary/*key effectTemplateID:Number, value EffectTempalteData*/ = new Dictionary();
-			for each (var effect:EffectData in effects) 
-			{
-				if(effectTempaltes[effect.templateID] == null)
-				{
-					effectTempaltes[effect.templateID] = Mediator.commands.executeCommand(CommandID.GET_EFFECT_TEMPLATE, new GetEffectTemplateCommandData(effect.templateID));
-				}
-			}
+			var effectTemplates:Vector.<EffectTemplateData> = Mediator.commands.executeCommand(CommandID.GET_EFFECT_TEMPLATES_ALREADY_IN_USE);
 			
-			for each(var effectTemplate:EffectTemplateData in effectTempaltes)
+			for each(var effectTemplate:EffectTemplateData in effectTemplates)
 			{
 				var stream:FileStream = null;
 				try

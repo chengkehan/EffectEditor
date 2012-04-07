@@ -8,6 +8,7 @@ package com.yheng.xianyuan.effectEditor.command
 		public static const REMOVE_EFFECT_TEMPLATE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("removeEffectTemplate", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const GET_EFFECT_TEMPLATE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("getEffectTemplate", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const CONTAINS_EFFECT_TEMPLATE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("containsEffectTemplate", com.yheng.xianyuan.effectEditor.command.CommandID);
+		public static const GET_EFFECT_TEMPLATES_ALREADY_IN_USE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("getEffectTemplatesAlreadyInUse", com.yheng.xianyuan.effectEditor.command.CommandID);
 		
 		public static const ADD_EFFECT:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("addEffect", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const REMOVE_EFFECT:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("removeEffect", com.yheng.xianyuan.effectEditor.command.CommandID);
