@@ -32,7 +32,7 @@ package com.yheng.xianyuan.effectEditor.view.menu
 							<item label="导出">
 								<item label="特效库..." onClick="saveLibrary"/>
 								<item label="当前数据..." onClick="outputEffect"/>
-								<item label="当前图片..."/>
+								<item label="当前图片..." onClick="outputImage"/>
 								<item label="当前图片数据..."/>
 							</item>
 							<item label="导入">
@@ -81,6 +81,11 @@ package com.yheng.xianyuan.effectEditor.view.menu
 		public function outputEffect(event:Event):void
 		{
 			Mediator.commands.executeCommand(CommandID.OUTPUT_EFFECT_COMMAND);
+		}
+		
+		public function outputImage(event:Event):void
+		{
+			Mediator.commands.executeCommand(CommandID.OUTPUT_IMAGE_COMMAND);
 		}
 	}
 }
