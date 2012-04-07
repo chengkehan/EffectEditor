@@ -33,7 +33,7 @@ package com.yheng.xianyuan.effectEditor.command
 				try
 				{
 					stream = new FileStream();
-					var imageFile:File = file.resolvePath(effectTemplate.name);
+					var imageFile:File = file.resolvePath(String(effectTemplate.id));
 					stream.open(imageFile, FileMode.WRITE);
 					stream.writeBytes(effectTemplate.bytes);
 				} 

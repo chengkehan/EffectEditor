@@ -23,6 +23,7 @@ package com.yheng.xianyuan.effectEditor.command
 				new CommandItem(CommandID.SET_PLAYING, new SetPlayingCommand()), 
 				new CommandItem(CommandID.OUTPUT_EFFECT_COMMAND, new OutputEffectCommand()), 
 				new CommandItem(CommandID.OUTPUT_IMAGE_COMMAND, new OutputImageCommand()), 
+				new CommandItem(CommandID.OUTPUT_EFFECT_AND_IMAGE_COMMAND, new OutputEffectAndImageCommand()), 
 				new CommandItem(CommandID.SAVE, new SaveCommand()), 
 				new CommandItem(CommandID.SAVE_LIBRARY, new SaveLibraryCommand()), 
 				new CommandItem(CommandID.OPEN, new OpenCommand()), 

@@ -31,6 +31,7 @@ package com.yheng.xianyuan.effectEditor.command
 		public static const NEW_FILE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("newFile", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const OUTPUT_EFFECT_COMMAND:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("outputEffectCommand", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const OUTPUT_IMAGE_COMMAND:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("outputImageCommand", com.yheng.xianyuan.effectEditor.command.CommandID);
+		public static const OUTPUT_EFFECT_AND_IMAGE_COMMAND:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("outputEffectAndImageCommand", com.yheng.xianyuan.effectEditor.command.CommandID);
 		
 		public static const SET_ASSISTANT_POINT_VISIBLE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("setAssistantPointVisible", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const GET_ASSISTANT_POINT_VISIBLE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("getAssistantPointVisible", com.yheng.xianyuan.effectEditor.command.CommandID);
