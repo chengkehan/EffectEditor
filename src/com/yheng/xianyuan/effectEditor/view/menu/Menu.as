@@ -40,6 +40,7 @@ package com.yheng.xianyuan.effectEditor.view.menu
 							</item>
 							<item label="合并">
 								<item label="多份数据..."/>
+								<item label="多张图片..."/>
 								<item label="多份数据图片..."/>
 							</item>
 						</item>

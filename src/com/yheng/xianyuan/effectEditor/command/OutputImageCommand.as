@@ -4,10 +4,12 @@ package com.yheng.xianyuan.effectEditor.command
 	import com.codeTooth.actionscript.lang.utils.FileUtil;
 	import com.yheng.xianyuan.effectEditor.core.Mediator;
 	import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
+	import com.yheng.xianyuan.effectEditor.persistence.ImageSerialize;
 	
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
+	import flash.utils.ByteArray;
 	
 	import mx.controls.Alert;
 	
@@ -32,10 +34,13 @@ package com.yheng.xianyuan.effectEditor.command
 				var stream:FileStream = null;
 				try
 				{
+					var buffer:ByteArray = new ByteArray();
+					new ImageSerialize().serialize(buffer, effectTemplate.bytes, effectTemplate.id);
+					
 					stream = new FileStream();
 					var imageFile:File = file.resolvePath(String(effectTemplate.id));
 					stream.open(imageFile, FileMode.WRITE);
-					stream.writeBytes(effectTemplate.bytes);
+					stream.writeBytes(buffer);
 				} 
 				catch(error:Error) 
 				{

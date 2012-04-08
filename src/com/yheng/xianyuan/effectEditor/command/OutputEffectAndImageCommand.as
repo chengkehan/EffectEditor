@@ -1,11 +1,11 @@
 package com.yheng.xianyuan.effectEditor.command
 {
 	import com.codeTooth.actionscript.command.ICommand;
-	import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
 	import com.codeTooth.actionscript.lang.utils.FileUtil;
 	import com.yheng.xianyuan.effectEditor.core.Mediator;
 	import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
 	import com.yheng.xianyuan.effectEditor.persistence.EffectDataSerialize;
+	import com.yheng.xianyuan.effectEditor.persistence.ImageSerialize;
 	
 	import flash.filesystem.FileStream;
 	import flash.utils.ByteArray;
@@ -37,8 +37,7 @@ package com.yheng.xianyuan.effectEditor.command
 			buffer.writeUnsignedInt(effectTempaltes.length);
 			for each(var effectTemplate:EffectTemplateData in effectTempaltes)
 			{
-				buffer.writeDouble(effectTemplate.id);
-				ByteArrayUtil.writeByteArrayAt(buffer, effectTemplate.bytes, buffer.position);
+				new ImageSerialize().serialize(buffer, effectTemplate.bytes, effectTemplate.id);
 			}
 			
 			stream.writeBytes(buffer);
