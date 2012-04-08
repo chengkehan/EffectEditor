@@ -75,7 +75,12 @@ package com.yheng.xianyuan.effectEditor.command
 				_outputBuffer.writeBytes(bufferListItem);
 			}
 			
-			FileUtil.save(writeStream, exceptionHadnler, null, _saveSysWndTitle);
+			FileUtil.save(writeStream, exceptionHadnler, null, _saveSysWndTitle, cancelHandler);
+		}
+		
+		private function cancelHandler():void
+		{
+			_outputBuffer = null;
 		}
 		
 		private function exceptionHadnler(error:Error):void
