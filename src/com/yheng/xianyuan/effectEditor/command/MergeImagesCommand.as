@@ -1,16 +1,11 @@
 package com.yheng.xianyuan.effectEditor.command
 {
-	import com.codeTooth.actionscript.command.ICommand;
 	
-	public class MergeImagesCommand implements ICommand
+	public class MergeImagesCommand extends MergeBaseCommand
 	{
 		public function MergeImagesCommand()
 		{
-		}
-		
-		public function execute(data:Object=null):*
-		{
-			return null;
+			super("mergeImageFile", "选择需要合并的图片", "选择保存合并的图片的位置", "合并图片时发生异常", "保存合并图片时发生异常");
 		}
 	}
 }
