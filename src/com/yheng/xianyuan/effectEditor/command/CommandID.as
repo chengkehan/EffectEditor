@@ -29,13 +29,6 @@ package com.yheng.xianyuan.effectEditor.command
 		public static const RESET:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("reset", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const EXIT:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("exit", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const NEW_FILE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("newFile", com.yheng.xianyuan.effectEditor.command.CommandID);
-		public static const OUTPUT_EFFECT:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("outputEffect", com.yheng.xianyuan.effectEditor.command.CommandID);
-		public static const OUTPUT_IMAGE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("outputImage", com.yheng.xianyuan.effectEditor.command.CommandID);
-		public static const OUTPUT_EFFECT_AND_IMAGE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("outputEffectAndImage", com.yheng.xianyuan.effectEditor.command.CommandID);
-		
-		public static const MERGE_EFFECTS:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("mergeEffects", com.yheng.xianyuan.effectEditor.command.CommandID);
-		public static const MERGE_IMAGES:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("mergeImages", com.yheng.xianyuan.effectEditor.command.CommandID);
-		public static const MERGE_EFFECTS_AND_IMAGES:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("mergeEffectsAndImages", com.yheng.xianyuan.effectEditor.command.CommandID);
 		
 		public static const SET_ASSISTANT_POINT_VISIBLE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("setAssistantPointVisible", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const GET_ASSISTANT_POINT_VISIBLE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("getAssistantPointVisible", com.yheng.xianyuan.effectEditor.command.CommandID);

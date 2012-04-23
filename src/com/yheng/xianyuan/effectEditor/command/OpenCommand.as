@@ -1,6 +1,7 @@
 package com.yheng.xianyuan.effectEditor.command
 {
 	import com.codeTooth.actionscript.command.ICommand;
+	import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
 	import com.codeTooth.actionscript.lang.utils.FileUtil;
 	import com.yheng.xianyuan.effectEditor.core.Mediator;
 	import com.yheng.xianyuan.effectEditor.persistence.DataDeserialize;
@@ -35,7 +36,15 @@ package com.yheng.xianyuan.effectEditor.command
 				stream = new FileStream();
 				stream.open(file, FileMode.READ);
 				stream.readBytes(buffer);
-				new DataDeserialize().deserialize(buffer);
+				
+				if(ByteArrayUtil.checkVerification(buffer, true))
+				{
+					new DataDeserialize().deserialize(buffer);
+				}
+				else
+				{
+					Alert.show("无法识别的文件格式");
+				}
 			} 
 			catch(error:Error) 
 			{

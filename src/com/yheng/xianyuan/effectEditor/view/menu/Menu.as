@@ -31,17 +31,11 @@ package com.yheng.xianyuan.effectEditor.view.menu
 						<item label="工具">
 							<item label="导出">
 								<item label="特效库..." onClick="saveLibrary"/>
-								<item label="当前数据..." onClick="outputEffect"/>
-								<item label="当前图片..." onClick="outputImage"/>
-								<item label="当前数据图片..." onClick="outputEffectAndImage"/>
 							</item>
 							<item label="导入">
 								<item label="特效库..." onClick="openLibrary"/>
 							</item>
 							<item label="合并">
-								<item label="多份数据..." onClick="mergeEffects"/>
-								<item label="多张图片..." onClick="mergeImages"/>
-								<item label="多份数据图片..." onClick="mergeEffectsAndImages"/>
 							</item>
 						</item>
 					</menu>
@@ -79,34 +73,5 @@ package com.yheng.xianyuan.effectEditor.view.menu
 			Mediator.commands.executeCommand(CommandID.OPEN_LIBRARY);
 		}
 		
-		public function outputEffect(event:Event):void
-		{
-			Mediator.commands.executeCommand(CommandID.OUTPUT_EFFECT);
-		}
-		
-		public function outputImage(event:Event):void
-		{
-			Mediator.commands.executeCommand(CommandID.OUTPUT_IMAGE);
-		}
-		
-		public function outputEffectAndImage(event:Event):void
-		{
-			Mediator.commands.executeCommand(CommandID.OUTPUT_EFFECT_AND_IMAGE);
-		}
-		
-		public function mergeEffects(event:Event):void
-		{
-			Mediator.commands.executeCommand(CommandID.MERGE_EFFECTS);
-		}
-		
-		public function mergeImages(event:Event):void
-		{
-			Mediator.commands.executeCommand(CommandID.MERGE_IMAGES);
-		}
-		
-		public function mergeEffectsAndImages(event:Event):void
-		{
-			Mediator.commands.executeCommand(CommandID.MERGE_EFFECTS_AND_IMAGES);
-		}
 	}
 }

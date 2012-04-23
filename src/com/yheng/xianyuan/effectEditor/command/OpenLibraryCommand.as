@@ -1,6 +1,7 @@
 package com.yheng.xianyuan.effectEditor.command
 {
 	import com.codeTooth.actionscript.command.ICommand;
+	import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
 	import com.codeTooth.actionscript.lang.utils.FileUtil;
 	import com.yheng.xianyuan.effectEditor.persistence.LibraryDeserialise;
 	
@@ -32,11 +33,19 @@ package com.yheng.xianyuan.effectEditor.command
 				stream = new FileStream();
 				stream.open(file, FileMode.READ);
 				stream.readBytes(buffer);
-				new LibraryDeserialise().deserialise(buffer);
+				
+				if(ByteArrayUtil.checkVerification(buffer, true))
+				{
+					new LibraryDeserialise().deserialise(buffer);
+				}
+				else
+				{
+					Alert.show("无法识别的特效库文件");
+				}
 			} 
 			catch(error:Error) 
 			{
-				Alert.show(error.message, "导入特效库时发生异常");
+				Alert.show(error.message, "无法识别的特效库文件");
 			}
 			finally
 			{

@@ -1,6 +1,7 @@
 package com.yheng.xianyuan.effectEditor.command
 {
 	import com.codeTooth.actionscript.command.ICommand;
+	import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
 	import com.codeTooth.actionscript.lang.utils.FileUtil;
 	import com.yheng.xianyuan.effectEditor.persistence.LibrarySerialize;
 	
@@ -29,6 +30,7 @@ package com.yheng.xianyuan.effectEditor.command
 		{
 			var buffer:ByteArray = new ByteArray();
 			new LibrarySerialize().serialise(buffer);
+			ByteArrayUtil.setVerification(buffer);
 			stream.writeBytes(buffer);
 		}
 	}
