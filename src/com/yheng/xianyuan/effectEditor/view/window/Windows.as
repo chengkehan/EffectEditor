@@ -7,6 +7,7 @@ package com.yheng.xianyuan.effectEditor.view.window
 	import com.yheng.xianyuan.effectEditor.core.Mediator;
 	import com.yheng.xianyuan.effectEditor.subject.SubjectID;
 	import com.yheng.xianyuan.effectEditor.view.window.importEffectWindow.ImportEffectWindow;
+	import com.yheng.xianyuan.effectEditor.view.window.mergeLibraryWindow.MergeLibraryWindow;
 	
 	import flash.display.DisplayObject;
 	
@@ -41,6 +42,8 @@ package com.yheng.xianyuan.effectEditor.view.window
 			_container = container;
 			Mediator.subjects.followSubject(this, SubjectID.SHOW_IMPORT_EFFECT_WINDOW);
 			Mediator.subjects.followSubject(this, SubjectID.HIDE_IMPORT_EFFECT_WINDOW);
+			Mediator.subjects.followSubject(this, SubjectID.SHOW_MERGE_LIBRARY_WINDOW);
+			Mediator.subjects.followSubject(this, SubjectID.HIDE_MERGE_LIBRARY_WINDOW);
 		}
 		
 		//------------------------------------------------------------------------------------------------------------------------------
@@ -62,6 +65,17 @@ package com.yheng.xianyuan.effectEditor.view.window
 					break;
 				}
 					
+				case SubjectID.SHOW_MERGE_LIBRARY_WINDOW:
+				{
+					showMergeLibraryWindow();
+					break;
+				}
+				case SubjectID.HIDE_MERGE_LIBRARY_WINDOW:
+				{
+					hideMergeLibraryWindow();
+					break;
+				}
+					
 				default:
 				{
 					throw new IllegalOperationException();
@@ -75,6 +89,8 @@ package com.yheng.xianyuan.effectEditor.view.window
 		//------------------------------------------------------------------------------------------------------------------------------
 		
 		private var _importEffectWindow:ImportEffectWindow = null;
+		
+		private var _mergeLibraryWindow:MergeLibraryWindow = null;
 		
 		private function showImportEffectWindow():void
 		{
@@ -95,6 +111,28 @@ package com.yheng.xianyuan.effectEditor.view.window
 			if(_importEffectWindow != null)
 			{
 				PopUpManager.removePopUp(_importEffectWindow);
+			}
+		}
+		
+		private function showMergeLibraryWindow():void
+		{
+			if(_mergeLibraryWindow == null)
+			{
+				_mergeLibraryWindow = new MergeLibraryWindow();
+				PopUpManager.addPopUp(_mergeLibraryWindow, _container);
+				PopUpManager.centerPopUp(_mergeLibraryWindow);
+			}
+			else
+			{
+				PopUpManager.addPopUp(_mergeLibraryWindow, _container);
+			}
+		}
+		
+		private function hideMergeLibraryWindow():void
+		{
+			if(_mergeLibraryWindow != null)
+			{
+				PopUpManager.removePopUp(_mergeLibraryWindow);
 			}
 		}
 	}

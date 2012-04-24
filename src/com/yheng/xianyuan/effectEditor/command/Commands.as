@@ -25,6 +25,7 @@ package com.yheng.xianyuan.effectEditor.command
 				new CommandItem(CommandID.SAVE_LIBRARY, new SaveLibraryCommand()), 
 				new CommandItem(CommandID.OPEN, new OpenCommand()), 
 				new CommandItem(CommandID.OPEN_LIBRARY, new OpenLibraryCommand()), 
+				new CommandItem(CommandID.MERGE_LIBRARY, new MergeLibraryCommand()), 
 				new CommandItem(CommandID.RESET, new ResetCommand()), 
 				new CommandItem(CommandID.EXIT, new ExitCommand()), 
 				new CommandItem(CommandID.NEW_FILE, new NewFileCommand()), 

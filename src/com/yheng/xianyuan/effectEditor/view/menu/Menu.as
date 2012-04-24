@@ -4,6 +4,7 @@ package com.yheng.xianyuan.effectEditor.view.menu
 	import com.codeTooth.actionscript.lang.exceptions.NullPointerException;
 	import com.yheng.xianyuan.effectEditor.command.CommandID;
 	import com.yheng.xianyuan.effectEditor.core.Mediator;
+	import com.yheng.xianyuan.effectEditor.subject.SubjectID;
 	
 	import flash.display.NativeWindow;
 	import flash.events.Event;
@@ -36,6 +37,7 @@ package com.yheng.xianyuan.effectEditor.view.menu
 								<item label="特效库..." onClick="openLibrary"/>
 							</item>
 							<item label="合并">
+								<item label="特效库..." onClick="mergeLibrary"/>
 							</item>
 						</item>
 					</menu>
@@ -73,5 +75,9 @@ package com.yheng.xianyuan.effectEditor.view.menu
 			Mediator.commands.executeCommand(CommandID.OPEN_LIBRARY);
 		}
 		
+		public function mergeLibrary(event:Event):void
+		{
+			Mediator.subjects.notifySubject(SubjectID.SHOW_MERGE_LIBRARY_WINDOW);
+		}
 	}
 }

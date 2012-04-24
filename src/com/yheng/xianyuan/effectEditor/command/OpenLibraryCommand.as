@@ -3,7 +3,7 @@ package com.yheng.xianyuan.effectEditor.command
 	import com.codeTooth.actionscript.command.ICommand;
 	import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
 	import com.codeTooth.actionscript.lang.utils.FileUtil;
-	import com.yheng.xianyuan.effectEditor.persistence.LibraryDeserialise;
+	import com.yheng.xianyuan.effectEditor.persistence.LibraryDeserialize;
 	
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
@@ -36,7 +36,7 @@ package com.yheng.xianyuan.effectEditor.command
 				
 				if(ByteArrayUtil.checkVerification(buffer, true))
 				{
-					new LibraryDeserialise().deserialise(buffer);
+					new LibraryDeserialize().deserialize(buffer);
 				}
 				else
 				{

@@ -7,6 +7,9 @@ package com.yheng.xianyuan.effectEditor.subject
 		public static const SHOW_IMPORT_EFFECT_WINDOW:ConstantObject = createInstance();
 		public static const HIDE_IMPORT_EFFECT_WINDOW:ConstantObject = createInstance();
 		
+		public static const SHOW_MERGE_LIBRARY_WINDOW:ConstantObject = createInstance();
+		public static const HIDE_MERGE_LIBRARY_WINDOW:ConstantObject = createInstance();
+		
 		public static const ADD_EFFECT_TEMPLATE:ConstantObject = createInstance();
 		public static const REMOVE_EFFECT_TEMPLATE:ConstantObject = createInstance();
 		

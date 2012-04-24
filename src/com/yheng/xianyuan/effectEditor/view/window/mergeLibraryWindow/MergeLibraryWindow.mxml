@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="522" height="406" title="合并特效库" close="closeHandler(event)">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.codeTooth.actionscript.display.Effect;
+			import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
+			import com.codeTooth.actionscript.lang.utils.FileUtil;
+			import com.yheng.xianyuan.effectEditor.core.Mediator;
+			import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
+			import com.yheng.xianyuan.effectEditor.subject.SubjectID;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			
+			[Bindable]
+			private var _listData:ArrayCollection = new ArrayCollection();
+			
+			private var _buffer:ByteArray = null;
+			
+			private function addHandler(event:MouseEvent):void
+			{
+				FileUtil.createFileStatic("mergeLibraryFile", true, null, null, null, selectHandler).browseForOpenMultiple("选择特效库文件");
+			}
+			
+			private function removeHandler(event:MouseEvent):void
+			{
+				if(list.selectedItem == null)
+				{
+					Alert.show("请选择一项进行删除");
+					return;
+				}
+				
+				_listData.removeItemAt(list.selectedIndex);
+			}
+			
+			private function startHandler(event:MouseEvent):void
+			{
+				if(_listData.length == 0)
+				{
+					Alert.show("请将需要合并的特效库添加到列表中");
+					return;
+				}
+				
+				var stream:FileStream = null;
+				try
+				{
+					var allLibBytes:Vector.<ByteArray> = new Vector.<ByteArray>();
+					var libBytes:ByteArray = null;
+					for each(var listItem:ListItem in _listData)
+					{
+						if(listItem.file.exists)
+						{
+							stream = new FileStream();
+							stream.open(listItem.file, FileMode.READ);
+							libBytes = new ByteArray();
+							stream.readBytes(libBytes);
+							allLibBytes.push(libBytes);
+							stream.close();
+							
+							if(!ByteArrayUtil.checkVerification(libBytes, true))
+							{
+								Alert.show(listItem.file.nativePath, "无法识别的特效库文件");
+								return;
+							}
+						}
+						else
+						{
+							Alert.show(listItem.file.nativePath, "文件不存在");
+							return;
+						}
+					}
+					
+					var effectTemplates:Vector.<EffectTemplateData> = new Vector.<EffectTemplateData>();
+					var effectTemplate:EffectTemplateData = null;
+					for each(libBytes in allLibBytes)
+					{
+						var count:uint = libBytes.readUnsignedInt();
+						for (var i:int = 0; i < count; i++) 
+						{
+							var id:Number = libBytes.readDouble();
+							var name:String = ByteArrayUtil.readStringAt(libBytes, libBytes.position);
+							var bytes:ByteArray = ByteArrayUtil.readByteArrayAt(libBytes, libBytes.position);
+							var sparrow:XML = new XML(ByteArrayUtil.readStringAt(libBytes, libBytes.position));
+							effectTemplate = new EffectTemplateData(id, name, null, bytes, sparrow);
+							effectTemplates.push(effectTemplate);
+						}
+					}
+					
+					var cover:Boolean = overrideRepeating.selected;
+					var result:Dictionary = new Dictionary();
+					var resultSize:int = 0;
+					for each(effectTemplate in effectTemplates)
+					{
+						var resultKey:Object = cover ? effectTemplate.name : effectTemplate.id;
+						if(result[resultKey] == null)
+						{
+							result[resultKey] = effectTemplate;
+							++resultSize;
+						}
+					}
+					
+					_buffer = new ByteArray();
+					_buffer.writeUnsignedInt(resultSize);
+					for each(effectTemplate in result)
+					{
+						_buffer.writeDouble(effectTemplate.id);
+						ByteArrayUtil.writeStringAt(_buffer, effectTemplate.name, _buffer.position);
+						ByteArrayUtil.writeByteArrayAt(_buffer, effectTemplate.bytes, _buffer.position);
+						ByteArrayUtil.writeStringAt(_buffer, effectTemplate.sparrow.toXMLString(), _buffer.position);
+					}
+					
+					FileUtil.save(saveWriteStream, saveExceptionCatcher, null, "保存合并的特效库");
+				} 
+				catch(error:Error) 
+				{
+					Alert.show(error.getStackTrace(), "合并特效库时发生异常");
+					return;
+				}
+				finally
+				{
+					if(stream != null)
+					{
+						stream.close();
+					}
+				}
+			}
+			
+			private function selectHandler(event:FileListEvent):void
+			{
+				for each(var file:File in event.files)
+				{
+					var listItem:ListItem = new ListItem(file.name, file);
+					_listData.addItem(listItem);
+				}
+			}
+			
+			private function closeHandler(event:CloseEvent):void
+			{
+				Mediator.subjects.notifySubject(SubjectID.HIDE_MERGE_LIBRARY_WINDOW);
+			}
+			
+			private function saveWriteStream(stream:FileStream):void
+			{
+				ByteArrayUtil.setVerification(_buffer);
+				stream.writeBytes(_buffer);
+			}
+			
+			private function saveExceptionCatcher(error:Error):void
+			{
+				Alert.show(error.getStackTrace(), "保存合并的特效库时发生异常");
+			}
+			
+		]]>
+	</fx:Script>
+	<s:List x="10" y="10" width="500" height="290" dataProvider="{_listData}" id="list"></s:List>
+	<s:Button x="10" y="308" label="添加" click="addHandler(event)"/>
+	<s:CheckBox x="10" y="339" label="对相同名称的特效进行合并" id="overrideRepeating"/>
+	<s:Button x="88" y="308" label="删除" click="removeHandler(event)"/>
+	<s:Button x="440" y="308" label="开始合并" click="startHandler(event)"/>
+</s:TitleWindow>
