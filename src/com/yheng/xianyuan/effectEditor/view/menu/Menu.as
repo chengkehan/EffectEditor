@@ -32,12 +32,14 @@ package com.yheng.xianyuan.effectEditor.view.menu
 						<item label="工具">
 							<item label="导出">
 								<item label="特效库..." onClick="saveLibrary"/>
+								<item label="特效" onClick="outputEffect"/>
 							</item>
 							<item label="导入">
 								<item label="特效库..." onClick="openLibrary"/>
 							</item>
 							<item label="合并">
 								<item label="特效库..." onClick="mergeLibrary"/>
+								<item label="特效..." onClick="mergeEffect"/>
 							</item>
 						</item>
 					</menu>
@@ -78,6 +80,16 @@ package com.yheng.xianyuan.effectEditor.view.menu
 		public function mergeLibrary(event:Event):void
 		{
 			Mediator.subjects.notifySubject(SubjectID.SHOW_MERGE_LIBRARY_WINDOW);
+		}
+		
+		public function outputEffect(event:Event):void
+		{
+			Mediator.commands.executeCommand(CommandID.OUTPUT_EFFECT);
+		}
+		
+		public function mergeEffect(event:Event):void
+		{
+			
 		}
 	}
 }

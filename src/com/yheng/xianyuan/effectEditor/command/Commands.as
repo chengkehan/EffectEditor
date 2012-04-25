@@ -39,7 +39,8 @@ package com.yheng.xianyuan.effectEditor.command
 				new CommandItem(CommandID.SET_REFERENCE_OBJECT, new SetReferenceObjectCommand()), 
 				new CommandItem(CommandID.GET_REFERENCE_OBJECT, new GetReferenceObjectCommand()), 
 				new CommandItem(CommandID.CLEAR_REFERENCE_OBJECT, new ClearReferenceObjectCommand()), 
-				new CommandItem(CommandID.MOVE_REFERENCE_OBJECT, new MoveReferenceObjectCommand())
+				new CommandItem(CommandID.MOVE_REFERENCE_OBJECT, new MoveReferenceObjectCommand()), 
+				new CommandItem(CommandID.OUTPUT_EFFECT, new OutputEffectCommand())
 			);
 		}
 	}
