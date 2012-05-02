@@ -20,11 +20,18 @@ package com.yheng.xianyuan.effectEditor.data
 		
 		private var _name:String = "";
 		
+		private var _version:uint = 1;
+		
 		public function Data()
 		{
 			_effectTemplatesData = new Vector.<EffectTemplateData>();
 			_effectsData = new Vector.<EffectData>();
 			_referenceObjectData = new ReferenceObjectData();
+		}
+		
+		public function get version():uint
+		{
+			return _version;
 		}
 		
 		effectEditor_internal function getReferenceObjectData():ReferenceObjectData

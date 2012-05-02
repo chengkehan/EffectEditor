@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" 
+			   width="522" height="406" close="closeHandler(event)" title="合并特效">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
+			import com.codeTooth.actionscript.lang.utils.Common;
+			import com.codeTooth.actionscript.lang.utils.FileUtil;
+			import com.yheng.xianyuan.effectEditor.core.Mediator;
+			import com.yheng.xianyuan.effectEditor.data.EffectData;
+			import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
+			import com.yheng.xianyuan.effectEditor.data.StageEffectData;
+			import com.yheng.xianyuan.effectEditor.persistence.StageEffectDeserialize;
+			import com.yheng.xianyuan.effectEditor.subject.SubjectID;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			
+			[Bindable]
+			private var _listData:ArrayCollection = new ArrayCollection();
+			
+			private var _result:ByteArray = null;
+			
+			private function addHandler(event:MouseEvent):void
+			{
+				FileUtil.createFileStatic("mergeEffectFile", true, null, null, null, selectHandler).browseForOpenMultiple("选择特效文件");
+			}
+			
+			private function removeHandler(event:MouseEvent):void
+			{
+				if(list.selectedItem == null)
+				{
+					Alert.show("请选择一项进行删除");
+					return;
+				}
+				
+				_listData.removeItemAt(list.selectedIndex);
+			}
+			
+			private function startHandler(event:MouseEvent):void
+			{
+				if(_listData.length == 0)
+				{
+					Alert.show("请将需要合并的特效添加到列表中");
+					return;
+				}
+				if(_listData.length == 1)
+				{
+					Alert.show("两个以上的特效才能进行合并");
+					return;
+				}
+				
+				var bytesList:Vector.<ByteArray> = new Vector.<ByteArray>();
+				var length:uint = _listData.length;
+				var bytes:ByteArray = null;
+				var stream:FileStream = null;
+				try
+				{
+					for each(var listItem:ListItem in _listData)
+					{
+						stream = new FileStream();
+						stream.open(listItem.file, FileMode.READ);
+						bytes = new ByteArray();
+						stream.readBytes(bytes);
+						bytesList.push(bytes);
+						stream.close();
+						
+						if(!ByteArrayUtil.checkVerification(bytes, true))
+						{
+							Alert.show("无法识别的场景特效文件");
+							return;
+						}
+					}
+					
+					var mergeStageEffect:StageEffectData = new StageEffectData();
+					var mergeStageEffectTemplateDic:Dictionary = new Dictionary();
+					var mergeStageEffectTempalteCount:uint = 0;
+					var cover:Boolean = overrideRepeating.selected;
+					mergeStageEffect.effects = new Vector.<EffectData>();
+					for (var i:int = 0; i < length; i++) 
+					{
+						bytes = bytesList[i];
+						var stageEffect:StageEffectData = new StageEffectDeserialize().deserialize(bytes);
+						
+						mergeStageEffect.name += stageEffect.name;
+						mergeStageEffect.data += stageEffect.fps + Common.COLON + stageEffect.effects.length;
+						mergeStageEffect.effects = mergeStageEffect.effects.concat(stageEffect.effects);
+						if(i != length - 1)
+						{
+							mergeStageEffect.name += Common.SEMICOLON;
+							mergeStageEffect.data += Common.SEMICOLON;
+						}
+						
+						for each(var stageEffectTempalte:EffectTemplateData in stageEffect.effectTemplates)
+						{
+							var mergeStageEffectTempalteKey:Object = cover ? stageEffectTempalte.name : stageEffectTempalte.id;
+							if(mergeStageEffectTemplateDic[mergeStageEffectTempalteKey] == null)
+							{
+								mergeStageEffectTemplateDic[mergeStageEffectTempalteKey] = stageEffectTempalte;
+								mergeStageEffectTempalteCount++;
+							}
+						}
+					}
+					mergeStageEffect.effectTemplates = new Vector.<EffectTemplateData>();
+					for each(var mergeStageEffectTempalte:EffectTemplateData in mergeStageEffectTemplateDic)
+					{
+						mergeStageEffect.effectTemplates.push(mergeStageEffectTempalte);
+					}
+					
+					_result = new ByteArray();
+					
+					_result.writeUnsignedInt(Mediator.data.version);
+					ByteArrayUtil.writeStringAt(_result, mergeStageEffect.name, _result.position);
+					_result.writeUnsignedInt(mergeStageEffect.fps);
+					ByteArrayUtil.writeStringAt(_result, mergeStageEffect.data, _result.position);
+					
+					_result.writeUnsignedInt(mergeStageEffectTempalteCount);
+					for each(mergeStageEffectTempalte in mergeStageEffect.effectTemplates)
+					{
+						_result.writeDouble(mergeStageEffectTempalte.id);
+						ByteArrayUtil.writeStringAt(_result, mergeStageEffectTempalte.name, _result.position);
+						ByteArrayUtil.writeByteArrayAt(_result, mergeStageEffectTempalte.bytes, _result.position);
+						ByteArrayUtil.writeStringAt(_result, mergeStageEffectTempalte.sparrow.toXMLString(), _result.position);
+					}
+					
+					_result.writeUnsignedInt(mergeStageEffect.effects.length);
+					for each(var effect:EffectData in mergeStageEffect.effects)
+					{
+						_result.writeDouble(effect.id);
+						_result.writeDouble(effect.templateID);
+						_result.writeInt(effect.origionX);
+						_result.writeInt(effect.origionY);
+						_result.writeInt(effect.emptyFramesPrefix);
+						_result.writeInt(effect.emptyFramesSuffix);
+					}
+					
+					FileUtil.save(saveWriteStream, saveExceptionCatcher, null, "保存合并的特效库");
+				} 
+				catch(error:Error) 
+				{
+					Alert.show(error.getStackTrace(), "合并场景特效时发生异常");
+					return;
+				}
+				finally
+				{
+					if(stream != null)
+					{
+						stream.close();
+					}
+				}
+			}
+			
+			private function closeHandler(event:CloseEvent):void
+			{
+				Mediator.subjects.notifySubject(SubjectID.HIDE_MERGE_STAGE_EFFECT_WINDOW);
+			}
+			
+			private function selectHandler(event:FileListEvent):void
+			{
+				for each(var file:File in event.files)
+				{
+					var listItem:ListItem = new ListItem(file.name, file);
+					_listData.addItem(listItem);
+				}
+			}
+			
+			private function saveWriteStream(stream:FileStream):void
+			{
+				ByteArrayUtil.setVerification(_result);
+				stream.writeBytes(_result);
+			}
+			
+			private function saveExceptionCatcher(error:Error):void
+			{
+				Alert.show(error.getStackTrace(), "保存合并的场景特效时发生异常");
+			}
+			
+		]]>
+	</fx:Script>
+	<s:List x="10" y="10" width="500" height="290" dataProvider="{_listData}" id="list"></s:List>
+	<s:Button x="10" y="308" label="添加" click="addHandler(event)"/>
+	<s:Button x="88" y="308" label="删除" click="removeHandler(event)"/>
+	<s:Button x="440" y="308" label="开始合并" click="startHandler(event)"/>
+	<s:CheckBox id="overrideRepeating" x="10" y="339" label="对相同名称的特效进行合并" selected="true"/>
+</s:TitleWindow>

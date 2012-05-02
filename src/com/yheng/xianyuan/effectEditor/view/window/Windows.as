@@ -7,6 +7,7 @@ package com.yheng.xianyuan.effectEditor.view.window
 	import com.yheng.xianyuan.effectEditor.core.Mediator;
 	import com.yheng.xianyuan.effectEditor.subject.SubjectID;
 	import com.yheng.xianyuan.effectEditor.view.window.importEffectWindow.ImportEffectWindow;
+	import com.yheng.xianyuan.effectEditor.view.window.mergeStageEffectWindow.MergeStageEffectWindow;
 	import com.yheng.xianyuan.effectEditor.view.window.mergeLibraryWindow.MergeLibraryWindow;
 	
 	import flash.display.DisplayObject;
@@ -44,6 +45,8 @@ package com.yheng.xianyuan.effectEditor.view.window
 			Mediator.subjects.followSubject(this, SubjectID.HIDE_IMPORT_EFFECT_WINDOW);
 			Mediator.subjects.followSubject(this, SubjectID.SHOW_MERGE_LIBRARY_WINDOW);
 			Mediator.subjects.followSubject(this, SubjectID.HIDE_MERGE_LIBRARY_WINDOW);
+			Mediator.subjects.followSubject(this, SubjectID.SHOW_MERGE_STAGE_EFFECT_WINDOW);
+			Mediator.subjects.followSubject(this, SubjectID.HIDE_MERGE_STAGE_EFFECT_WINDOW);
 		}
 		
 		//------------------------------------------------------------------------------------------------------------------------------
@@ -76,6 +79,18 @@ package com.yheng.xianyuan.effectEditor.view.window
 					break;
 				}
 					
+				case SubjectID.SHOW_MERGE_STAGE_EFFECT_WINDOW:
+				{
+					showMergeEffectWindow();
+					break;
+				}
+					
+				case SubjectID.HIDE_MERGE_STAGE_EFFECT_WINDOW:
+				{
+					hideMergeEffectWindow();
+					break;
+				}
+					
 				default:
 				{
 					throw new IllegalOperationException();
@@ -91,6 +106,8 @@ package com.yheng.xianyuan.effectEditor.view.window
 		private var _importEffectWindow:ImportEffectWindow = null;
 		
 		private var _mergeLibraryWindow:MergeLibraryWindow = null;
+		
+		private var _mergeEffectWindow:MergeStageEffectWindow = null;
 		
 		private function showImportEffectWindow():void
 		{
@@ -133,6 +150,28 @@ package com.yheng.xianyuan.effectEditor.view.window
 			if(_mergeLibraryWindow != null)
 			{
 				PopUpManager.removePopUp(_mergeLibraryWindow);
+			}
+		}
+		
+		private function showMergeEffectWindow():void
+		{
+			if(_mergeEffectWindow == null)
+			{
+				_mergeEffectWindow = new MergeStageEffectWindow();
+				PopUpManager.addPopUp(_mergeEffectWindow, _container);
+				PopUpManager.centerPopUp(_mergeEffectWindow);
+			}
+			else
+			{
+				PopUpManager.addPopUp(_mergeEffectWindow, _container);
+			}
+		}
+		
+		private function hideMergeEffectWindow():void
+		{
+			if(_mergeEffectWindow != null)
+			{
+				PopUpManager.removePopUp(_mergeEffectWindow);
 			}
 		}
 	}

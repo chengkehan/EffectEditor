@@ -25,11 +25,12 @@ package com.yheng.xianyuan.effectEditor.persistence
 			
 			var data:Data = Mediator.data;
 			
+			buffer.writeUnsignedInt(data.version);
 			ByteArrayUtil.writeStringAt(buffer, data.getName(), buffer.position);
 			buffer.writeBoolean(data.getPlaying());
 			buffer.writeBoolean(data.getAssistantPointVisible());
 			buffer.writeUnsignedInt(data.getWorkspaceColor());
-			buffer.writeByte(data.getFPS());
+			buffer.writeUnsignedInt(data.getFPS());
 			serializeReferenceObject(buffer, data.getReferenceObjectData());
 			serializeEffectTemplates(buffer, data.getEffectTemplatesData());
 			serializeEffects(buffer, data.getEffectsData());

@@ -2,6 +2,7 @@ package com.yheng.xianyuan.effectEditor.data
 {
 	import com.codeTooth.actionscript.lang.utils.destroy.IDestroy;
 	import com.codeTooth.actionscript.lang.utils.newUniqueObject.IUniqueObject;
+	import com.yheng.xianyuan.effectEditor.core.effectEditor_internal;
 	
 	import flash.display.BitmapData;
 	import flash.utils.ByteArray;
@@ -38,6 +39,11 @@ package com.yheng.xianyuan.effectEditor.data
 		public function get bitmapData():BitmapData
 		{
 			return _bmpd;
+		}
+		
+		effectEditor_internal function setBitmapData(bmpd:BitmapData):void
+		{
+			_bmpd = bmpd;
 		}
 		
 		public function get sparrow():XML

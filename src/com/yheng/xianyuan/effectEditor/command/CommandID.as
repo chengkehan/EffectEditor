@@ -29,7 +29,6 @@ package com.yheng.xianyuan.effectEditor.command
 		public static const RESET:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("reset", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const EXIT:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("exit", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const NEW_FILE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("newFile", com.yheng.xianyuan.effectEditor.command.CommandID);
-		public static const MERGE_LIBRARY:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("mergeLibrary", com.yheng.xianyuan.effectEditor.command.CommandID);
 		
 		public static const SET_ASSISTANT_POINT_VISIBLE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("setAssistantPointVisible", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const GET_ASSISTANT_POINT_VISIBLE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("getAssistantPointVisible", com.yheng.xianyuan.effectEditor.command.CommandID);
@@ -45,6 +44,6 @@ package com.yheng.xianyuan.effectEditor.command
 		public static const GET_REFERENCE_OBJECT:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("getReferenceObject", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const MOVE_REFERENCE_OBJECT:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("moveReferenceObject", com.yheng.xianyuan.effectEditor.command.CommandID);
 		
-		public static const OUTPUT_EFFECT:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("outputEffect", com.yheng.xianyuan.effectEditor.command.CommandID);
+		public static const OUTPUT_STAGE_EFFECT:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("outputEffect", com.yheng.xianyuan.effectEditor.command.CommandID);
 	}
 }

@@ -4,9 +4,10 @@ package com.yheng.xianyuan.effectEditor.persistence
 	import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
 	import com.yheng.xianyuan.effectEditor.core.Mediator;
 	import com.yheng.xianyuan.effectEditor.core.effectEditor_internal;
+	import com.yheng.xianyuan.effectEditor.data.Data;
+	import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
 	
 	import flash.utils.ByteArray;
-	import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
 
 	public class LibrarySerialize
 	{
@@ -19,8 +20,12 @@ package com.yheng.xianyuan.effectEditor.persistence
 				throw new NullPointerException("Null input buffer parameter.");
 			}
 			
+			var data:Data = Mediator.data;
+			
+			buffer.writeUnsignedInt(data.version);
+			
 			// Write effectTemplates
-			var effectTemplates:Vector.<EffectTemplateData> = Mediator.data.getEffectTemplatesData();
+			var effectTemplates:Vector.<EffectTemplateData> = data.getEffectTemplatesData();
 			buffer.writeUnsignedInt(effectTemplates.length);
 			for each(var effectTemplate:EffectTemplateData in effectTemplates)
 			{

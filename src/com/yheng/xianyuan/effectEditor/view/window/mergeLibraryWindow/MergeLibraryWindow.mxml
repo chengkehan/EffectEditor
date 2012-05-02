@@ -47,6 +47,11 @@
 					Alert.show("请将需要合并的特效库添加到列表中");
 					return;
 				}
+				if(_listData.length == 1)
+				{
+					Alert.show("两个以上的特效库才能进行合并");
+					return;
+				}
 				
 				var stream:FileStream = null;
 				try
@@ -55,24 +60,16 @@
 					var libBytes:ByteArray = null;
 					for each(var listItem:ListItem in _listData)
 					{
-						if(listItem.file.exists)
+						stream = new FileStream();
+						stream.open(listItem.file, FileMode.READ);
+						libBytes = new ByteArray();
+						stream.readBytes(libBytes);
+						allLibBytes.push(libBytes);
+						stream.close();
+						
+						if(!ByteArrayUtil.checkVerification(libBytes, true))
 						{
-							stream = new FileStream();
-							stream.open(listItem.file, FileMode.READ);
-							libBytes = new ByteArray();
-							stream.readBytes(libBytes);
-							allLibBytes.push(libBytes);
-							stream.close();
-							
-							if(!ByteArrayUtil.checkVerification(libBytes, true))
-							{
-								Alert.show(listItem.file.nativePath, "无法识别的特效库文件");
-								return;
-							}
-						}
-						else
-						{
-							Alert.show(listItem.file.nativePath, "文件不存在");
+							Alert.show(listItem.file.nativePath, "无法识别的特效库文件");
 							return;
 						}
 					}
@@ -81,6 +78,9 @@
 					var effectTemplate:EffectTemplateData = null;
 					for each(libBytes in allLibBytes)
 					{
+						// version
+						libBytes.readUnsignedInt();
+						
 						var count:uint = libBytes.readUnsignedInt();
 						for (var i:int = 0; i < count; i++) 
 						{
@@ -107,6 +107,7 @@
 					}
 					
 					_buffer = new ByteArray();
+					_buffer.writeUnsignedInt(Mediator.data.version);
 					_buffer.writeUnsignedInt(resultSize);
 					for each(effectTemplate in result)
 					{
@@ -161,7 +162,7 @@
 	</fx:Script>
 	<s:List x="10" y="10" width="500" height="290" dataProvider="{_listData}" id="list"></s:List>
 	<s:Button x="10" y="308" label="添加" click="addHandler(event)"/>
-	<s:CheckBox x="10" y="339" label="对相同名称的特效进行合并" id="overrideRepeating"/>
+	<s:CheckBox id="overrideRepeating" x="10" y="339" label="对相同名称的特效进行合并" selected="true"/>
 	<s:Button x="88" y="308" label="删除" click="removeHandler(event)"/>
 	<s:Button x="440" y="308" label="开始合并" click="startHandler(event)"/>
 </s:TitleWindow>

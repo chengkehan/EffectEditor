@@ -30,6 +30,10 @@ package com.yheng.xianyuan.effectEditor.persistence
 			_buffer = buffer;
 			_completeCallback = completeCallback;
 			_effectTemplateIndex = 0;
+			
+			// version
+			buffer.readUnsignedInt();
+			
 			_numEffectTemplates = buffer.readUnsignedInt();
 			deserializeEffectTemplateCompleteCallback();
 		}

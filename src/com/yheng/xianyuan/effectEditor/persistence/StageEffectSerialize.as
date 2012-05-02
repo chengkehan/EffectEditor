@@ -2,6 +2,7 @@ package com.yheng.xianyuan.effectEditor.persistence
 {
 	import com.codeTooth.actionscript.lang.exceptions.NullPointerException;
 	import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
+	import com.codeTooth.actionscript.lang.utils.Common;
 	import com.yheng.xianyuan.effectEditor.command.CommandID;
 	import com.yheng.xianyuan.effectEditor.command.GetEffectTemplateCommandData;
 	import com.yheng.xianyuan.effectEditor.core.Mediator;
@@ -11,12 +12,13 @@ package com.yheng.xianyuan.effectEditor.persistence
 	import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
 	
 	import flash.utils.ByteArray;
+	import flash.utils.Dictionary;
 
-	public class EffectSerialize
+	public class StageEffectSerialize
 	{
 		use namespace effectEditor_internal;
 		
-		public function EffectSerialize()
+		public function StageEffectSerialize()
 		{
 		}
 		
@@ -29,23 +31,30 @@ package com.yheng.xianyuan.effectEditor.persistence
 			
 			var data:Data = Mediator.data;
 			
+			buffer.writeUnsignedInt(data.version);
 			ByteArrayUtil.writeStringAt(buffer, data.getName(), buffer.position);
-			buffer.writeByte(data.getFPS());
+			buffer.writeUnsignedInt(data.getFPS());
+			ByteArrayUtil.writeStringAt(buffer, Common.EMPTY_STRING, buffer.position);
 			serializeEffectTemplates(buffer, data.getEffectsData());
 			serializeEffects(buffer, data.getEffectsData());
 		}
 		
 		private function serializeEffectTemplates(buffer:ByteArray, effects:Vector.<EffectData>):void
 		{
-			var usefulEffectTemplates:Vector.<EffectTemplateData> = new Vector.<EffectTemplateData>();
+			var usefulEffectTemplates:Dictionary = new Dictionary();
+			var usefulEffectTemplatesCount:uint = 0;
 			var effectTemplate:EffectTemplateData = null;
 			for each(var effect:EffectData in effects)
 			{
 				effectTemplate = Mediator.commands.executeCommand(CommandID.GET_EFFECT_TEMPLATE, new GetEffectTemplateCommandData(effect.templateID));
-				usefulEffectTemplates.push(effectTemplate);
+				if(usefulEffectTemplates[effectTemplate.id] == null)
+				{
+					usefulEffectTemplates[effectTemplate.id] = effectTemplate;
+					usefulEffectTemplatesCount++;
+				}
 			}
 			
-			buffer.writeUnsignedInt(usefulEffectTemplates.length);
+			buffer.writeUnsignedInt(usefulEffectTemplatesCount);
 			for each(effectTemplate in usefulEffectTemplates)
 			{
 				buffer.writeDouble(effectTemplate.id);

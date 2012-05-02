@@ -53,7 +53,7 @@ package com.yheng.xianyuan.effectEditor.persistence
 			var bgColor:uint = buffer.readUnsignedInt();
 			Mediator.commands.executeCommand(CommandID.SET_WORKSPACE_COLOR, new SetWorkspaceColorCommandData(bgColor));
 			
-			var fps:int = buffer.readUnsignedByte();
+			var fps:int = buffer.readUnsignedInt();
 			Mediator.commands.executeCommand(CommandID.SET_FPS, new SetFPSCommandData(fps));
 			
 			deserializeReferenceObject(buffer);

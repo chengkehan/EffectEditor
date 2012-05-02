@@ -32,14 +32,14 @@ package com.yheng.xianyuan.effectEditor.view.menu
 						<item label="工具">
 							<item label="导出">
 								<item label="特效库..." onClick="saveLibrary"/>
-								<item label="特效" onClick="outputEffect"/>
+								<item label="舞台特效" onClick="outputStageEffect"/>
 							</item>
 							<item label="导入">
 								<item label="特效库..." onClick="openLibrary"/>
 							</item>
 							<item label="合并">
 								<item label="特效库..." onClick="mergeLibrary"/>
-								<item label="特效..." onClick="mergeEffect"/>
+								<item label="舞台特效..." onClick="mergeStageEffect"/>
 							</item>
 						</item>
 					</menu>
@@ -82,14 +82,14 @@ package com.yheng.xianyuan.effectEditor.view.menu
 			Mediator.subjects.notifySubject(SubjectID.SHOW_MERGE_LIBRARY_WINDOW);
 		}
 		
-		public function outputEffect(event:Event):void
+		public function outputStageEffect(event:Event):void
 		{
-			Mediator.commands.executeCommand(CommandID.OUTPUT_EFFECT);
+			Mediator.commands.executeCommand(CommandID.OUTPUT_STAGE_EFFECT);
 		}
 		
-		public function mergeEffect(event:Event):void
+		public function mergeStageEffect(event:Event):void
 		{
-			
+			Mediator.subjects.notifySubject(SubjectID.SHOW_MERGE_STAGE_EFFECT_WINDOW);
 		}
 	}
 }

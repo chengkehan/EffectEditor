@@ -25,7 +25,6 @@ package com.yheng.xianyuan.effectEditor.command
 				new CommandItem(CommandID.SAVE_LIBRARY, new SaveLibraryCommand()), 
 				new CommandItem(CommandID.OPEN, new OpenCommand()), 
 				new CommandItem(CommandID.OPEN_LIBRARY, new OpenLibraryCommand()), 
-				new CommandItem(CommandID.MERGE_LIBRARY, new MergeLibraryCommand()), 
 				new CommandItem(CommandID.RESET, new ResetCommand()), 
 				new CommandItem(CommandID.EXIT, new ExitCommand()), 
 				new CommandItem(CommandID.NEW_FILE, new NewFileCommand()), 
@@ -40,7 +39,7 @@ package com.yheng.xianyuan.effectEditor.command
 				new CommandItem(CommandID.GET_REFERENCE_OBJECT, new GetReferenceObjectCommand()), 
 				new CommandItem(CommandID.CLEAR_REFERENCE_OBJECT, new ClearReferenceObjectCommand()), 
 				new CommandItem(CommandID.MOVE_REFERENCE_OBJECT, new MoveReferenceObjectCommand()), 
-				new CommandItem(CommandID.OUTPUT_EFFECT, new OutputEffectCommand())
+				new CommandItem(CommandID.OUTPUT_STAGE_EFFECT, new OutputStageEffectCommand())
 			);
 		}
 	}
