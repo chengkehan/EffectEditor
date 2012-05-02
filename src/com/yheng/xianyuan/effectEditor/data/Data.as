@@ -4,10 +4,13 @@ package com.yheng.xianyuan.effectEditor.data
 
 	public class Data
 	{
+		// 参照物
 		private var _referenceObjectData:ReferenceObjectData = null;
 		
+		// 特效模板数据
 		private var _effectTemplatesData:Vector.<EffectTemplateData> = null;
 		
+		// 特效数据
 		private var _effectsData:Vector.<EffectData> = null;
 		
 		private var _workspaceColor:uint = 0x000000;

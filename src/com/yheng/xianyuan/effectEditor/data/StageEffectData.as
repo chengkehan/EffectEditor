@@ -2,16 +2,24 @@ package com.yheng.xianyuan.effectEditor.data
 {
 	import com.codeTooth.actionscript.lang.utils.destroy.IDestroy;
 
+	/**
+	 * 场景特效数据
+	 */
 	public class StageEffectData implements IDestroy
 	{
+		// 场景特效的名称
 		private var _name:String = null;
 		
+		// 帧频
 		private var _fps:int = 0;
 		
+		// 附加数据
 		private var _data:String = "";
 		
+		// 所有用到的特效模板数据
 		private var _effectTemplates:Vector.<EffectTemplateData> = null;
 		
+		// 场景中所有的特效数据
 		private var _effects:Vector.<EffectData> = null;
 		
 		public function StageEffectData()

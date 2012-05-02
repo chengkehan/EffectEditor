@@ -7,14 +7,21 @@ package com.yheng.xianyuan.effectEditor.data
 	import flash.display.BitmapData;
 	import flash.utils.ByteArray;
 
+	/**
+	 * 特效模板数据
+	 */
 	public class EffectTemplateData implements IUniqueObject, IDestroy
 	{
+		// 模板名称
 		private var _name:String = null;
 		
+		// 图片字节
 		private var _bytes:ByteArray = null;
 		
+		// 位图
 		private var _bmpd:BitmapData = null;
 		
+		// 描述数据
 		private var _sparrow:XML = null;
 		
 		public function EffectTemplateData(id:Number, name:String, bmpd:BitmapData, bytes:ByteArray, sparrow:XML)

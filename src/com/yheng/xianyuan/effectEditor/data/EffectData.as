@@ -4,16 +4,24 @@ package com.yheng.xianyuan.effectEditor.data
 	import com.codeTooth.actionscript.lang.utils.newUniqueObject.IUniqueObject;
 	import com.yheng.xianyuan.effectEditor.core.effectEditor_internal;
 
+	/**
+	 * 特效数据
+	 */
 	public class EffectData implements IUniqueObject, IDestroy
 	{
+		// 所使用的特效模板的ID
 		private var _templateID:Number = 0;
 		
+		// 前置空帧数
 		private var _emptyFramesPrefix:int = 0;
 		
+		// 后置空帧数
 		private var _emptyFramesSuffix:int = 0;
 		
+		// 注册点x
 		private var _origionX:int = 0;
 		
+		// 注册点y
 		private var _origionY:int = 0;
 		
 		public function EffectData(id:Number, templateID:Number, origionX:int = 0, origionY:int = 0, emptyFramesPrefix:int = 0, emptyFramesSuffix:int = 0)
