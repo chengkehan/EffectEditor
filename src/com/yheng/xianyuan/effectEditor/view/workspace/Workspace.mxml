@@ -423,6 +423,13 @@
 			
 			private function setPlaying(data:SetPlayingNotifyData):void
 			{
+				if(data.playing)
+				{
+					for each(var effect:Effect in _effects)
+					{
+						effect.getAction().gotoClip(0);
+					}
+				}
 				_player.running = data.playing;
 			}
 			
