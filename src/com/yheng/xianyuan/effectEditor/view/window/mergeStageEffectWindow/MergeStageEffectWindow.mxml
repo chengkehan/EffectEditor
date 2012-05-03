@@ -61,11 +61,13 @@
 				var length:uint = _listData.length;
 				var bytes:ByteArray = null;
 				var stream:FileStream = null;
+				var file:File = null;
 				try
 				{
 					for each(var listItem:ListItem in _listData)
 					{
 						stream = new FileStream();
+						file = listItem.file;
 						stream.open(listItem.file, FileMode.READ);
 						bytes = new ByteArray();
 						stream.readBytes(bytes);
@@ -74,7 +76,7 @@
 						
 						if(!ByteArrayUtil.checkVerification(bytes, true))
 						{
-							Alert.show("无法识别的场景特效文件");
+							Alert.show(file.nativePath, "无法识别的文件格式");
 							return;
 						}
 					}
@@ -120,7 +122,7 @@
 				} 
 				catch(error:Error) 
 				{
-					Alert.show(error.getStackTrace(), "合并场景特效时发生异常");
+					Alert.show(file.nativePath, "无法识别的文件格式");
 					return;
 				}
 				finally

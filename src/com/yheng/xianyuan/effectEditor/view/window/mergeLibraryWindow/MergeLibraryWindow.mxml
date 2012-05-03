@@ -55,6 +55,7 @@
 				}
 				
 				var stream:FileStream = null;
+				var file:File = null;
 				try
 				{
 					var allLibBytes:Vector.<ByteArray> = new Vector.<ByteArray>();
@@ -62,6 +63,7 @@
 					for each(var listItem:ListItem in _listData)
 					{
 						stream = new FileStream();
+						file = listItem.file;
 						stream.open(listItem.file, FileMode.READ);
 						libBytes = new ByteArray();
 						stream.readBytes(libBytes);
@@ -70,7 +72,7 @@
 						
 						if(!ByteArrayUtil.checkVerification(libBytes, true))
 						{
-							Alert.show(listItem.file.nativePath, "无法识别的特效库文件");
+							Alert.show(file.nativePath, "无法识别的文件格式");
 							return;
 						}
 					}
@@ -102,7 +104,7 @@
 				} 
 				catch(error:Error) 
 				{
-					Alert.show(error.getStackTrace(), "合并特效库时发生异常");
+					Alert.show(file.nativePath, "无法识别的文件格式");
 					return;
 				}
 				finally

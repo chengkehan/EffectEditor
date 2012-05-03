@@ -27,6 +27,7 @@
 			import com.yheng.xianyuan.effectEditor.subject.RemoveEffectNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SelectEffectNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SetAssistantPointVisibleNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SetFPSNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SetNameNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SetWorkspaceColorNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SubjectID;
@@ -46,6 +47,7 @@
 				Mediator.subjects.followSubject(this, SubjectID.REMOVE_EFFECT);
 				Mediator.subjects.followSubject(this, SubjectID.SET_ASSISTANT_POINT_VISIBLE);
 				Mediator.subjects.followSubject(this, SubjectID.SET_NAME);
+				Mediator.subjects.followSubject(this, SubjectID.SET_FPS);
 			}
 			
 			//------------------------------------------------------------------------------------------------------------------------------
@@ -89,6 +91,12 @@
 					case SubjectID.SET_NAME:
 					{
 						setName(SetNameNotifyData(data));
+						break;
+					}
+						
+					case SubjectID.SET_FPS:
+					{
+						setFPS(SetFPSNotifyData(data));
 						break;
 					}
 						
@@ -190,6 +198,11 @@
 				Mediator.commands.executeCommand(CommandID.SET_FPS, new SetFPSCommandData(fps.value));
 			}
 			
+			private function setFPS(data:SetFPSNotifyData):void
+			{
+				fps.value = data.fps;
+			}
+			
 			// 特效名字
 			private function setName(data:SetNameNotifyData):void
 			{
@@ -270,7 +283,7 @@
 	</s:HGroup>
 	<s:HGroup verticalAlign="middle">
 		<s:Label text="帧频"/>
-		<s:NumericStepper id="fps" value="30" width="100" minimum="24" maximum="60"/>
+		<s:NumericStepper id="fps" value="30" width="100" minimum="1" maximum="60"/>
 		<s:Button label="确定" width="45" click="fpsChangeHandler(event)"/>
 	</s:HGroup>
 	<mx:HRule width="100%"/>
