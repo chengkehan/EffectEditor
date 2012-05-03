@@ -4,6 +4,8 @@ package com.yheng.xianyuan.effectEditor.command
 	import com.codeTooth.actionscript.lang.utils.Assert;
 	import com.yheng.xianyuan.effectEditor.core.Mediator;
 	import com.yheng.xianyuan.effectEditor.core.effectEditor_internal;
+	import com.yheng.xianyuan.effectEditor.subject.SetPlayingNotifyData;
+	import com.yheng.xianyuan.effectEditor.subject.SubjectID;
 	
 	public class SetPlayingCommand implements ICommand
 	{
@@ -17,6 +19,7 @@ package com.yheng.xianyuan.effectEditor.command
 			
 			var input:SetPlayingCommandData = SetPlayingCommandData(data);
 			Mediator.data.effectEditor_internal::setPlaying(input.playing);
+			Mediator.subjects.notifySubject(SubjectID.SET_PLAYING, new SetPlayingNotifyData(input.playing));
 		}
 	}
 }

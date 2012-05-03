@@ -22,6 +22,7 @@ package com.yheng.xianyuan.effectEditor.subject
 		public static const REMOVE_EFFECT:ConstantObject = createInstance();
 		public static const REMOVE_EFFECT_PREPARE:ConstantObject = createInstance();
 		public static const SET_EFFECT_EMPTY_FRAMES:ConstantObject = createInstance();
+		public static const SET_PLAYING:ConstantObject = createInstance();
 		
 		public static const SET_WORKSPACE_COLOR:ConstantObject = createInstance();
 		

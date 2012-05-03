@@ -13,6 +13,7 @@
 		<![CDATA[
 			import com.codeTooth.actionscript.display.Box;
 			import com.codeTooth.actionscript.game.action.ActionData;
+			import com.codeTooth.actionscript.game.action.ActionPlayer;
 			import com.codeTooth.actionscript.interaction.drag.ISimpleDragable;
 			import com.codeTooth.actionscript.interaction.drag.SimpleDragManager;
 			import com.codeTooth.actionscript.interaction.selection.SimpleSelectionManager;
@@ -32,6 +33,7 @@
 			import com.yheng.xianyuan.effectEditor.subject.SetAssistantPointVisibleNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SetEffectEmptyFramesNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SetFPSNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SetPlayingNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SetReferenceObjectNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SetWorkspaceColorNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SubjectID;
@@ -106,6 +108,12 @@
 						moveReferenceObject(MoveReferenceObjectNotifyData(data));
 						break;
 					}
+						
+					case SubjectID.SET_PLAYING:
+					{
+						setPlaying(SetPlayingNotifyData(data))
+						break;
+					}
 					
 					default:
 					{
@@ -133,11 +141,7 @@
 			{
 				if(Mediator.commands.executeCommand(CommandID.GET_PLAYING))
 				{
-					playEffects();
-				}
-				else
-				{
-					stopEffects();
+					_selectionManager.redrawBounds();
 				}
 			}
 			
@@ -163,6 +167,9 @@
 				Mediator.subjects.followSubject(this, SubjectID.SET_REFERENCE_OBJECT);
 				Mediator.subjects.followSubject(this, SubjectID.CLEAR_REFERENCE_OBJECT);
 				Mediator.subjects.followSubject(this, SubjectID.MOVE_REFERENCE_OBJECT);
+				Mediator.subjects.followSubject(this, SubjectID.SET_PLAYING);
+				
+				stage.frameRate = 60;
 			}
 			
 			private function resizeHandler(event:ResizeEvent):void
@@ -179,7 +186,7 @@
 			
 			private function setFPS(data:SetFPSNotifyData):void
 			{
-				stage.frameRate = data.fps;
+				_player.setFPS(data.fps);
 			}
 			
 			//------------------------------------------------------------------------------------------------------------------------------
@@ -293,14 +300,6 @@
 				}
 			}
 			
-			private function refreshSelectionManager(effect:Effect):void
-			{
-				if(effect == _selectionManager.selectabledObject)
-				{
-					_selectionManager.redrawBounds();
-				}
-			}
-			
 			private function unselectEffect(effect:Effect):void
 			{
 				if(effect == _selectionManager.selectabledObject)
@@ -326,9 +325,13 @@
 			
 			private var _effects:Vector.<Effect> = null;
 			
+			private var _player:ActionPlayer = null;
+			
 			private function initializeEffects():void
 			{
 				_effects = new Vector.<Effect>();
+				_player = new ActionPlayer();
+				Mediator.mainLoop.addSubLoop(_player);
 			}
 			
 			private function repositionEffects():void
@@ -378,6 +381,8 @@
 				effect.boxVisible = Mediator.commands.executeCommand(CommandID.GET_ASSISTANT_POINT_VISIBLE);
 				addChild(effect);
 				_effects.push(effect);
+				_player.addAction(effect.getAction());
+				_player.setFPS(Mediator.commands.executeCommand(CommandID.GET_FPS), effect.getAction());
 				
 				if(!Mediator.commands.executeCommand(CommandID.GET_PLAYING))
 				{
@@ -393,6 +398,7 @@
 				{
 					if(effect.id == data.effectData.id)
 					{
+						_player.removeAction(effect.getAction());
 						_effects.splice(index, 1);
 						effect.destroy();
 						unselectEffect(effect);
@@ -415,27 +421,9 @@
 				Mediator.commands.executeCommand(CommandID.REMOVE_EFFECT, new RemoveEffectCommandData(effect.id));
 			}
 			
-			private function playEffects():void
+			private function setPlaying(data:SetPlayingNotifyData):void
 			{
-				for each(var effect:Effect in _effects)
-				{
-					effect.getAction().refreshClip();
-					effect.getAction().nextClip();
-					refreshSelectionManager(effect);
-				}
-			}
-			
-			private function stopEffects():void
-			{
-				for each(var effect:Effect in _effects)
-				{
-					if(effect.getAction().currentClipIndex != 0)
-					{
-						effect.getAction().gotoClip(0);
-						effect.getAction().refreshClip();
-						refreshSelectionManager(effect);
-					}
-				}
+				_player.running = data.playing;
 			}
 			
 			//------------------------------------------------------------------------------------------------------------------------------
