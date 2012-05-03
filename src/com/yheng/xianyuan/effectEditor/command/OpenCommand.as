@@ -2,6 +2,7 @@ package com.yheng.xianyuan.effectEditor.command
 {
 	import com.codeTooth.actionscript.command.ICommand;
 	import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
+	import com.codeTooth.actionscript.lang.utils.Common;
 	import com.codeTooth.actionscript.lang.utils.FileUtil;
 	import com.yheng.xianyuan.effectEditor.core.Mediator;
 	import com.yheng.xianyuan.effectEditor.core.effectEditor_internal;
@@ -54,13 +55,14 @@ package com.yheng.xianyuan.effectEditor.command
 				}
 				else
 				{
-					Alert.show("无法识别的文件格式");
+					Alert.show(file.nativePath, "无法识别的文件格式");
+					return;
 				}
 			} 
 			catch(error:Error) 
 			{
-				Alert.show(error.message, "打开文件时发生异常");
-				Mediator.commands.executeCommand(CommandID.RESET);
+				Alert.show(file.nativePath, "无法识别的文件格式");
+				return;
 			}
 			finally
 			{

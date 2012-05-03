@@ -48,12 +48,13 @@ package com.yheng.xianyuan.effectEditor.command
 				}
 				else
 				{
-					Alert.show("无法识别的特效库文件");
+					Alert.show(file.nativePath, "无法识别的文件格式");
+					return;
 				}
 			} 
 			catch(error:Error) 
 			{
-				Alert.show(error.message, "无法识别的特效库文件");
+				Alert.show(file.nativePath, "无法识别的文件格式");
 				return;
 			}
 			finally

@@ -54,7 +54,7 @@ package com.yheng.xianyuan.effectEditor.command
 			catch(error:Error) 
 			{
 				errorCallbackInvoke();
-				Alert.show(error.getStackTrace(), "读取PNG图片时发生异常");
+				Alert.show(error.message, "读取PNG图片时发生异常");
 				return;
 			}
 			

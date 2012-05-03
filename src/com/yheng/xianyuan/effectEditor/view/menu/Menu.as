@@ -32,7 +32,7 @@ package com.yheng.xianyuan.effectEditor.view.menu
 						<item label="工具">
 							<item label="导出">
 								<item label="特效库..." onClick="saveLibrary"/>
-								<item label="舞台特效" onClick="outputStageEffect"/>
+								<item label="舞台特效..." onClick="outputStageEffect"/>
 							</item>
 							<item label="导入">
 								<item label="特效库..." onClick="openLibrary"/>
