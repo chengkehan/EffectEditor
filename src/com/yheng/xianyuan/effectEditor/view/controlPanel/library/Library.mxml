@@ -133,9 +133,9 @@
 	</fx:Script>
 	<s:List width="100%" height="100%" id="list" dataProvider="{_listData}" change="listItemChangeHandler(event)"/>
 	<s:HGroup>
-		<s:Button id="addEffectBtn" label="(-" width="30" height="28" click="addEffectHandler(event)"/>
-		<s:Button id="removeEffectBtn" label="-)" width="30" height="28" click="removeEffectHandler(event)"/>
-		<s:Button id="addEffectTemplateBtn" label="+" width="28" height="28" click="addEffectTemplateHandler(event)"/>
-		<s:Button id="removeEffectTemplateBtn" label="-" width="28" height="28" click="removeEffectTemplateHadnler(event)"/>
+		<s:Button id="addEffectBtn" icon="@Embed('ok.png')" width="30" height="28" click="addEffectHandler(event)"/>
+		<s:Button id="removeEffectBtn" icon="@Embed('cancel.png')" width="30" height="28" click="removeEffectHandler(event)"/>
+		<s:Button id="addEffectTemplateBtn" icon="@Embed('add.png')" width="28" height="28" click="addEffectTemplateHandler(event)"/>
+		<s:Button id="removeEffectTemplateBtn" icon="@Embed('remove.png')" width="28" height="28" click="removeEffectTemplateHadnler(event)"/>
 	</s:HGroup>
 </s:VGroup>

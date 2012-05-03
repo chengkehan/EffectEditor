@@ -278,8 +278,8 @@
 	</s:HGroup>
 	<mx:HRule width="100%"/>
 	<s:HGroup>
-		<s:Button label="口" width="32" height="28" click="stopHandler(event)"/>
-		<s:Button label="-)" width="30" height="28" click="playHandler(event)"/>
+		<s:Button icon="@Embed('pause.png')" width="32" height="28" click="stopHandler(event)"/>
+		<s:Button icon="@Embed('play.png')" width="30" height="28" click="playHandler(event)"/>
 	</s:HGroup>
 	<s:HGroup verticalAlign="middle">
 		<s:Label text="帧频"/>
