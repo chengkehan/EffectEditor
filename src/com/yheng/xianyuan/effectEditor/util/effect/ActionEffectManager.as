@@ -109,7 +109,11 @@ package com.yheng.xianyuan.effectEditor.util.effect
 							actionData.addEmptyClipsSuffix(effect.emptyFramesSuffix);
 							actionsData.push(actionData);
 						}
-						return new ActionGroup(actionsData);
+						
+						var actionGroup:ActionGroup = new ActionGroup(actionsData);
+						actionGroup.fps = stageEffect.fps;
+						
+						return actionGroup;
 					}
 				}
 				
