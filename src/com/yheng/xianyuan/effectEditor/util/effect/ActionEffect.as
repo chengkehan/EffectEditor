@@ -3,6 +3,7 @@ package com.yheng.xianyuan.effectEditor.util.effect
 	import com.codeTooth.actionscript.game.action.ClipsDataManager;
 	import com.codeTooth.actionscript.lang.utils.destroy.IDestroy;
 	import com.codeTooth.actionscript.lang.utils.newUniqueObject.IUniqueObject;
+	import com.yheng.xianyuan.effectEditor.core.effectEditor_internal;
 	import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
 	import com.yheng.xianyuan.effectEditor.data.StageEffectData;
 	
@@ -12,7 +13,7 @@ package com.yheng.xianyuan.effectEditor.util.effect
 	{
 		private var _id:Number = 0;
 		
-		private var _mergeEffect:MergeEffect = null;
+		private var _mergeEffectLoader:MergeEffectLoader = null;
 		
 		private var _completeCallback:Function = null;
 		
@@ -23,8 +24,8 @@ package com.yheng.xianyuan.effectEditor.util.effect
 			_id = id;
 			_completeCallback = pCompleteCallback;
 			_clipsDataManager = clipsDataManager;
-			_mergeEffect = new MergeEffect();
-			_mergeEffect.loadBytes(bytes, completeCallback);
+			_mergeEffectLoader = new MergeEffectLoader();
+			_mergeEffectLoader.loadBytes(bytes, completeCallback);
 		}
 		
 		public function get id():Number
@@ -32,20 +33,22 @@ package com.yheng.xianyuan.effectEditor.util.effect
 			return _id;
 		}
 		
-		public function getMergeEffect():MergeEffect
+		public function getMergeEffectLoader():MergeEffectLoader
 		{
-			return _mergeEffect;
+			return _mergeEffectLoader;
 		}
 		
 		private function completeCallback():void
 		{
-			var stageEffectList:Vector.<StageEffectData> = _mergeEffect.getStageEffectList();
+			var stageEffectList:Vector.<StageEffectData> = _mergeEffectLoader.getStageEffectList();
 			if(stageEffectList.length > 0)
 			{
 				var stageEffect:StageEffectData = stageEffectList[0];
 				for each(var effectTemplate:EffectTemplateData in stageEffect.effectTemplates)
 				{
 					_clipsDataManager.createClipsData(effectTemplate.id, effectTemplate.sparrow, effectTemplate.bitmapData);
+					effectTemplate.bitmapData.dispose();
+					effectTemplate.effectEditor_internal::setBitmapData(null);
 				}
 			}
 			
@@ -59,10 +62,10 @@ package com.yheng.xianyuan.effectEditor.util.effect
 				_clipsDataManager.destroyClipsData(_id);
 				_clipsDataManager = null;
 			}
-			if(_mergeEffect != null)
+			if(_mergeEffectLoader != null)
 			{
-				_mergeEffect.destroy();
-				_mergeEffect = null;
+				_mergeEffectLoader.destroy();
+				_mergeEffectLoader = null;
 			}
 			_completeCallback = null;
 			_clipsDataManager = null;

@@ -16,6 +16,7 @@
 			import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
 			import com.yheng.xianyuan.effectEditor.data.StageEffectData;
 			import com.yheng.xianyuan.effectEditor.persistence.StageEffectDeserialize;
+			import com.yheng.xianyuan.effectEditor.persistence.StageEffectSerialize;
 			import com.yheng.xianyuan.effectEditor.subject.SubjectID;
 			
 			import mx.collections.ArrayCollection;
@@ -80,13 +81,13 @@
 					
 					var mergeStageEffect:StageEffectData = new StageEffectData();
 					var mergeStageEffectTemplateDic:Dictionary = new Dictionary();
-					var mergeStageEffectTempalteCount:uint = 0;
 					var cover:Boolean = overrideRepeating.selected;
 					mergeStageEffect.effects = new Vector.<EffectData>();
 					for (var i:int = 0; i < length; i++) 
 					{
 						bytes = bytesList[i];
-						var stageEffect:StageEffectData = new StageEffectDeserialize().deserialize(bytes);
+						var stageEffect:StageEffectData = new StageEffectData()
+						new StageEffectDeserialize().deserialize(bytes, stageEffect);
 						
 						mergeStageEffect.name += stageEffect.name;
 						mergeStageEffect.data += stageEffect.fps + Common.COLON + stageEffect.effects.length;
@@ -103,7 +104,6 @@
 							if(mergeStageEffectTemplateDic[mergeStageEffectTempalteKey] == null)
 							{
 								mergeStageEffectTemplateDic[mergeStageEffectTempalteKey] = stageEffectTempalte;
-								mergeStageEffectTempalteCount++;
 							}
 						}
 					}
@@ -114,31 +114,7 @@
 					}
 					
 					_result = new ByteArray();
-					
-					_result.writeUnsignedInt(Mediator.data.version);
-					ByteArrayUtil.writeStringAt(_result, mergeStageEffect.name, _result.position);
-					_result.writeUnsignedInt(mergeStageEffect.fps);
-					ByteArrayUtil.writeStringAt(_result, mergeStageEffect.data, _result.position);
-					
-					_result.writeUnsignedInt(mergeStageEffectTempalteCount);
-					for each(mergeStageEffectTempalte in mergeStageEffect.effectTemplates)
-					{
-						_result.writeDouble(mergeStageEffectTempalte.id);
-						ByteArrayUtil.writeStringAt(_result, mergeStageEffectTempalte.name, _result.position);
-						ByteArrayUtil.writeByteArrayAt(_result, mergeStageEffectTempalte.bytes, _result.position);
-						ByteArrayUtil.writeStringAt(_result, mergeStageEffectTempalte.sparrow.toXMLString(), _result.position);
-					}
-					
-					_result.writeUnsignedInt(mergeStageEffect.effects.length);
-					for each(var effect:EffectData in mergeStageEffect.effects)
-					{
-						_result.writeDouble(effect.id);
-						_result.writeDouble(effect.templateID);
-						_result.writeInt(effect.origionX);
-						_result.writeInt(effect.origionY);
-						_result.writeInt(effect.emptyFramesPrefix);
-						_result.writeInt(effect.emptyFramesSuffix);
-					}
+					new StageEffectSerialize().serialize(_result, Mediator.data.version, mergeStageEffect);
 					
 					FileUtil.save(saveWriteStream, saveExceptionCatcher, null, "保存合并的特效库");
 				} 

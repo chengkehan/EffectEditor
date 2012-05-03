@@ -1,7 +1,6 @@
 package com.yheng.xianyuan.effectEditor.util.effect
 {
 	import com.codeTooth.actionscript.lang.exceptions.NullPointerException;
-	import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
 	import com.codeTooth.actionscript.lang.utils.Common;
 	import com.codeTooth.actionscript.lang.utils.destroy.DestroyUtil;
 	import com.codeTooth.actionscript.lang.utils.destroy.IDestroy;
@@ -9,11 +8,12 @@ package com.yheng.xianyuan.effectEditor.util.effect
 	import com.yheng.xianyuan.effectEditor.data.EffectData;
 	import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
 	import com.yheng.xianyuan.effectEditor.data.StageEffectData;
+	import com.yheng.xianyuan.effectEditor.persistence.StageEffectDeserialize;
 	
 	import flash.events.EventDispatcher;
 	import flash.utils.ByteArray;
 
-	internal class MergeEffect extends EventDispatcher implements IDestroy
+	internal class MergeEffectLoader extends EventDispatcher implements IDestroy
 	{
 		private var _stageEffectList:Vector.<StageEffectData> = null;
 		
@@ -25,7 +25,7 @@ package com.yheng.xianyuan.effectEditor.util.effect
 		
 		private var _completeCallback:Function = null;
 		
-		public function MergeEffect()
+		public function MergeEffectLoader()
 		{
 			
 		}
@@ -84,62 +84,31 @@ package com.yheng.xianyuan.effectEditor.util.effect
 		
 		private function parseBytes(bytes:ByteArray):void
 		{
-			var stageEffect:StageEffectData = null;
+			var stageEffectMerge:StageEffectData = new StageEffectData();
+			new StageEffectDeserialize().deserialize(bytes, stageEffectMerge);
 			var i:int = 0;
 			
-			// version
-			bytes.readUnsignedInt();
-			var names:String = ByteArrayUtil.readStringAt(bytes, bytes.position);
+			var stageEffect:StageEffectData = null;
+			var names:String = stageEffectMerge.name
 			var nameBlocks:Array = names.split(Common.SEMICOLON);
 			for each(var nameBlock:String in nameBlocks)
 			{
 				stageEffect = new StageEffectData();
 				stageEffect.name = nameBlock;
 				stageEffect.effects = new Vector.<EffectData>();
-				stageEffect.effectTemplates = new Vector.<EffectTemplateData>();
+				stageEffect.effectTemplates = stageEffectMerge.effectTemplates;
 				_stageEffectList.push(stageEffect);
 			}
 			
-			// FPS unuseable
-			bytes.readUnsignedInt();
-			
 			var numStageEffects:uint = _stageEffectList.length;
 			
-			var fpsAndLength:String = ByteArrayUtil.readStringAt(bytes, bytes.position);
+			var fpsAndLength:String = stageEffectMerge.data
 			var fpsAndLengthBlocks:Array = fpsAndLength.split(Common.SEMICOLON);
 			for (i = 0; i < numStageEffects; i++) 
 			{
 				var fpsAndLengthBlock:Array = String(fpsAndLengthBlocks[i]).split(Common.COLON);
 				_stageEffectList[i].fps = fpsAndLengthBlock[0];
 				_stageEffectList[i].data = fpsAndLengthBlock[1];
-			}
-			
-			var numEffectTempaltes:uint = bytes.readUnsignedInt();
-			for (i = 0; i < numEffectTempaltes; i++) 
-			{
-				var effectTempalteID:Number = bytes.readDouble();
-				var effectTempalteName:String = ByteArrayUtil.readStringAt(bytes, bytes.position);
-				var effectTempalteBytes:ByteArray = ByteArrayUtil.readByteArrayAt(bytes, bytes.position);
-				var effectTemplateSparrow:XML = XML(ByteArrayUtil.readStringAt(bytes, bytes.position));
-				var effectTemplate:EffectTemplateData = new EffectTemplateData(effectTempalteID, effectTempalteName, null, effectTempalteBytes, effectTemplateSparrow);
-				for each(stageEffect in _stageEffectList)
-				{
-					stageEffect.effectTemplates.push(effectTemplate);
-				}
-			}
-			
-			var numEffects:uint = bytes.readUnsignedInt();
-			var effects:Vector.<EffectData> = new Vector.<EffectData>();
-			for(i = 0; i < numEffects; i++)
-			{
-				var effectID:Number = bytes.readDouble();
-				var effectTemplateID:Number = bytes.readDouble();
-				var effectOrigionX:int = bytes.readInt();
-				var effectOrigionY:int = bytes.readInt();
-				var effectPrefix:int =  bytes.readInt();
-				var effectSuffix:int = bytes.readInt();
-				var effect:EffectData = new EffectData(effectID, effectTempalteID, effectOrigionX, effectOrigionY, effectPrefix, effectSuffix);
-				effects.push(effect);
 			}
 			
 			var iFrom:int = 0;
@@ -150,7 +119,7 @@ package com.yheng.xianyuan.effectEditor.util.effect
 				iTo += int(stageEffect.data);
 				for(i = iFrom; i < iTo; i++)
 				{
-					stageEffect.effects.push(effects[i]);
+					stageEffect.effects.push(stageEffectMerge.effects[i]);
 				}
 			}
 		}

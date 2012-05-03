@@ -53,6 +53,7 @@ package com.yheng.xianyuan.effectEditor.command
 			} 
 			catch(error:Error) 
 			{
+				errorCallbackInvoke();
 				Alert.show(error.getStackTrace(), "读取PNG图片时发生异常");
 				return;
 			}
@@ -72,22 +73,30 @@ package com.yheng.xianyuan.effectEditor.command
 			
 			Mediator.clipsDataManager.createClipsData(_input.effectTemplateID, _input.sparrow, bmpd);
 			
-			var callback:Function = _input.completeCallback;
-			_input = null;
-			if(callback != null)
+			if(_input.completeCallback != null)
 			{
-				callback();
+				_input.completeCallback();
 			}
 		}
 		
 		private function pngLoaderIOErrorHandler(event:IOErrorEvent):void
 		{
+			errorCallbackInvoke();
 			Alert.show(event.text, "选择的不是一个可用的PNG文件");
 		}
 		
 		private function pngLoaderSecurityErrorHandler(event:SecurityErrorEvent):void
 		{
+			errorCallbackInvoke();
 			Alert.show(event.text, "读取PNG图片文件时发生沙箱异常");
+		}
+		
+		private function errorCallbackInvoke():void
+		{
+			if(_input.errorCallback != null)
+			{
+				_input.errorCallback();
+			}
 		}
 	}
 }

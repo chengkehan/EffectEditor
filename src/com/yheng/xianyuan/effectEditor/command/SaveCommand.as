@@ -3,6 +3,9 @@ package com.yheng.xianyuan.effectEditor.command
 	import com.codeTooth.actionscript.command.ICommand;
 	import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
 	import com.codeTooth.actionscript.lang.utils.FileUtil;
+	import com.yheng.xianyuan.effectEditor.core.Mediator;
+	import com.yheng.xianyuan.effectEditor.core.effectEditor_internal;
+	import com.yheng.xianyuan.effectEditor.data.Data;
 	import com.yheng.xianyuan.effectEditor.persistence.DataSerialize;
 	
 	import flash.filesystem.FileStream;
@@ -12,6 +15,8 @@ package com.yheng.xianyuan.effectEditor.command
 	
 	public class SaveCommand implements ICommand
 	{
+		use namespace effectEditor_internal;
+		
 		public function SaveCommand()
 		{
 		}
@@ -28,8 +33,12 @@ package com.yheng.xianyuan.effectEditor.command
 		
 		private function writeStream(stream:FileStream):void
 		{
+			var data:Data = Mediator.data;
 			var buffer:ByteArray = new ByteArray();
-			new DataSerialize().serialize(buffer);
+			new DataSerialize().serialize(
+				buffer, data.version, data.getName(), data.getPlaying(), data.getAssistantPointVisible(), data.getWorkspaceColor(), data.getFPS(), 
+				data.getReferenceObjectData(), data.getEffectTemplatesData(), data.getEffectsData()
+			);
 			ByteArrayUtil.setVerification(buffer);
 			stream.writeBytes(buffer);
 		}

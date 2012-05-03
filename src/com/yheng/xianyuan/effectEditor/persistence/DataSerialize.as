@@ -1,39 +1,46 @@
 package com.yheng.xianyuan.effectEditor.persistence
 {
-	import com.codeTooth.actionscript.display.Effect;
 	import com.codeTooth.actionscript.lang.exceptions.NullPointerException;
 	import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
-	import com.yheng.xianyuan.effectEditor.core.Mediator;
-	import com.yheng.xianyuan.effectEditor.core.effectEditor_internal;
-	
-	import flash.utils.ByteArray;
-	import com.yheng.xianyuan.effectEditor.data.Data;
 	import com.yheng.xianyuan.effectEditor.data.EffectData;
 	import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
 	import com.yheng.xianyuan.effectEditor.data.ReferenceObjectData;
+	
+	import flash.utils.ByteArray;
 
 	public class DataSerialize
 	{
-		use namespace effectEditor_internal;
-		
-		public function serialize(buffer:ByteArray):void
+		public function serialize(
+			buffer:ByteArray, 
+			version:uint, name:String, playing:Boolean, assistantPointVisible:Boolean, workspaceColor:uint, fps:uint, 
+			referenceObjectData:ReferenceObjectData, effectTempaltesData:Vector.<EffectTemplateData>, effectsData:Vector.<EffectData>):void
 		{
 			if(buffer == null)
 			{
 				throw new NullPointerException("Null input buffer parameter.");
 			}
+			if(referenceObjectData == null)
+			{
+				throw new NullPointerException("Null input referenceObjectData parameter.");
+			}
+			if(effectTempaltesData == null)
+			{
+				throw new NullPointerException("Null input effectTempaltesData parameter.");
+			}
+			if(effectsData == null)
+			{
+				throw new NullPointerException("Null input effectsData parameter.");
+			}
 			
-			var data:Data = Mediator.data;
-			
-			buffer.writeUnsignedInt(data.version);
-			ByteArrayUtil.writeStringAt(buffer, data.getName(), buffer.position);
-			buffer.writeBoolean(data.getPlaying());
-			buffer.writeBoolean(data.getAssistantPointVisible());
-			buffer.writeUnsignedInt(data.getWorkspaceColor());
-			buffer.writeUnsignedInt(data.getFPS());
-			serializeReferenceObject(buffer, data.getReferenceObjectData());
-			serializeEffectTemplates(buffer, data.getEffectTemplatesData());
-			serializeEffects(buffer, data.getEffectsData());
+			buffer.writeUnsignedInt(version);
+			ByteArrayUtil.writeStringAt(buffer, name, buffer.position);
+			buffer.writeBoolean(playing);
+			buffer.writeBoolean(assistantPointVisible);
+			buffer.writeUnsignedInt(workspaceColor);
+			buffer.writeUnsignedInt(fps);
+			serializeReferenceObject(buffer, referenceObjectData);
+			serializeEffectTemplates(buffer, effectTempaltesData);
+			serializeEffects(buffer, effectsData);
 		}
 		
 		private function serializeReferenceObject(buffer:ByteArray, refObj:ReferenceObjectData):void

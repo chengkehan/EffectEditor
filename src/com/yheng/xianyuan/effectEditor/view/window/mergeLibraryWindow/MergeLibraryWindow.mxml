@@ -8,11 +8,12 @@
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
-			import com.codeTooth.actionscript.display.Effect;
 			import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
 			import com.codeTooth.actionscript.lang.utils.FileUtil;
 			import com.yheng.xianyuan.effectEditor.core.Mediator;
 			import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
+			import com.yheng.xianyuan.effectEditor.persistence.LibraryDeserialize;
+			import com.yheng.xianyuan.effectEditor.persistence.LibrarySerialize;
 			import com.yheng.xianyuan.effectEditor.subject.SubjectID;
 			
 			import mx.collections.ArrayCollection;
@@ -78,44 +79,24 @@
 					var effectTemplate:EffectTemplateData = null;
 					for each(libBytes in allLibBytes)
 					{
-						// version
-						libBytes.readUnsignedInt();
-						
-						var count:uint = libBytes.readUnsignedInt();
-						for (var i:int = 0; i < count; i++) 
-						{
-							var id:Number = libBytes.readDouble();
-							var name:String = ByteArrayUtil.readStringAt(libBytes, libBytes.position);
-							var bytes:ByteArray = ByteArrayUtil.readByteArrayAt(libBytes, libBytes.position);
-							var sparrow:XML = new XML(ByteArrayUtil.readStringAt(libBytes, libBytes.position));
-							effectTemplate = new EffectTemplateData(id, name, null, bytes, sparrow);
-							effectTemplates.push(effectTemplate);
-						}
+						new LibraryDeserialize().deserialize(libBytes, effectTemplates);
 					}
 					
 					var cover:Boolean = overrideRepeating.selected;
 					var result:Dictionary = new Dictionary();
-					var resultSize:int = 0;
+					var resultList:Vector.<EffectTemplateData> = new Vector.<EffectTemplateData>();
 					for each(effectTemplate in effectTemplates)
 					{
 						var resultKey:Object = cover ? effectTemplate.name : effectTemplate.id;
 						if(result[resultKey] == null)
 						{
 							result[resultKey] = effectTemplate;
-							++resultSize;
+							resultList.push(effectTemplate);
 						}
 					}
 					
 					_buffer = new ByteArray();
-					_buffer.writeUnsignedInt(Mediator.data.version);
-					_buffer.writeUnsignedInt(resultSize);
-					for each(effectTemplate in result)
-					{
-						_buffer.writeDouble(effectTemplate.id);
-						ByteArrayUtil.writeStringAt(_buffer, effectTemplate.name, _buffer.position);
-						ByteArrayUtil.writeByteArrayAt(_buffer, effectTemplate.bytes, _buffer.position);
-						ByteArrayUtil.writeStringAt(_buffer, effectTemplate.sparrow.toXMLString(), _buffer.position);
-					}
+					new LibrarySerialize().serialize(_buffer, Mediator.data.version, resultList);
 					
 					FileUtil.save(saveWriteStream, saveExceptionCatcher, null, "保存合并的特效库");
 				} 

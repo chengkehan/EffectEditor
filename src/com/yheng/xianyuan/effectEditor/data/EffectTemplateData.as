@@ -38,9 +38,19 @@ package com.yheng.xianyuan.effectEditor.data
 			return _bytes;
 		}
 		
+		effectEditor_internal function setBytes(bytes:ByteArray):void
+		{
+			_bytes = bytes;
+		}
+		
 		public function get name():String
 		{
 			return _name;
+		}
+		
+		effectEditor_internal function setName(name:String):void
+		{
+			_name = name;
 		}
 		
 		public function get bitmapData():BitmapData
@@ -56,6 +66,11 @@ package com.yheng.xianyuan.effectEditor.data
 		public function get sparrow():XML
 		{
 			return _sparrow;
+		}
+		
+		effectEditor_internal function setSparrow(xml:XML):void
+		{
+			_sparrow = sparrow;
 		}
 		
 		//------------------------------------------------------------------------------------------------------------------------------

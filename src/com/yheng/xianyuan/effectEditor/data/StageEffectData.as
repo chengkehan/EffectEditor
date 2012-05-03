@@ -8,10 +8,10 @@ package com.yheng.xianyuan.effectEditor.data
 	public class StageEffectData implements IDestroy
 	{
 		// 场景特效的名称
-		private var _name:String = null;
+		private var _name:String = "";
 		
 		// 帧频
-		private var _fps:int = 0;
+		private var _fps:uint = 0;
 		
 		// 附加数据
 		private var _data:String = "";
@@ -36,12 +36,12 @@ package com.yheng.xianyuan.effectEditor.data
 			_name = value;
 		}
 
-		public function get fps():int
+		public function get fps():uint
 		{
 			return _fps;
 		}
 
-		public function set fps(value:int):void
+		public function set fps(value:uint):void
 		{
 			_fps = value;
 		}

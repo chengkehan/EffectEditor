@@ -19,7 +19,7 @@ package com.yheng.xianyuan.effectEditor.data
 		
 		private var _assistantPointVisible:Boolean = true;
 		
-		private var _fps:int = 30;
+		private var _fps:uint = 30;
 		
 		private var _name:String = "";
 		
@@ -37,6 +37,11 @@ package com.yheng.xianyuan.effectEditor.data
 			return _version;
 		}
 		
+		effectEditor_internal function setReferenceObjectData(data:ReferenceObjectData):void
+		{
+			_referenceObjectData = data;
+		}
+		
 		effectEditor_internal function getReferenceObjectData():ReferenceObjectData
 		{
 			return _referenceObjectData;
@@ -51,9 +56,19 @@ package com.yheng.xianyuan.effectEditor.data
 			return _name;
 		}
 		
+		effectEditor_internal function setEffectTemplatesData(data:Vector.<EffectTemplateData>):void
+		{
+			_effectTemplatesData = data;
+		}
+		
 		effectEditor_internal function getEffectTemplatesData():Vector.<EffectTemplateData>
 		{
 			return _effectTemplatesData;
+		}
+		
+		effectEditor_internal function setEffectsData(data:Vector.<EffectData>):void
+		{
+			_effectsData = data;
 		}
 		
 		effectEditor_internal function getEffectsData():Vector.<EffectData>
@@ -90,11 +105,11 @@ package com.yheng.xianyuan.effectEditor.data
 			return _assistantPointVisible;
 		}
 		
-		effectEditor_internal function setFPS(value:int):void
+		effectEditor_internal function setFPS(value:uint):void
 		{
 			_fps = value;
 		}
-		effectEditor_internal function getFPS():int
+		effectEditor_internal function getFPS():uint
 		{
 			return _fps;
 		}

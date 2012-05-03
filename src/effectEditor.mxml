@@ -12,6 +12,7 @@
 		<![CDATA[
 			import com.yheng.xianyuan.effectEditor.command.CommandID;
 			import com.yheng.xianyuan.effectEditor.core.Mediator;
+			import com.yheng.xianyuan.effectEditor.util.effect.ActionEffectManager;
 			import com.yheng.xianyuan.effectEditor.view.menu.Menu;
 			
 			import mx.events.FlexEvent;
@@ -26,6 +27,7 @@
 				Mediator.initialize(this);
 				
 				stage.frameRate = Mediator.commands.executeCommand(CommandID.GET_FPS);
+				ActionEffectManager;
 			}
 			
 		]]>

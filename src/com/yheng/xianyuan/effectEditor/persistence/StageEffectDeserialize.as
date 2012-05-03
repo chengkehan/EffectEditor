@@ -14,23 +14,23 @@ package com.yheng.xianyuan.effectEditor.persistence
 		{
 		}
 		
-		public function deserialize(buffer:ByteArray):StageEffectData
+		public function deserialize(buffer:ByteArray, stageEffect:StageEffectData):void
 		{
 			if(buffer == null)
 			{
 				throw new NullPointerException("Null input buffer parameter.");
 			}
+			if(stageEffect == null)
+			{
+				throw new NullPointerException("Null input stageEffect parameter.");
+			}
 			
-			var stageEffect:StageEffectData = new StageEffectData();
-			// version
 			buffer.readUnsignedInt();
 			stageEffect.name = ByteArrayUtil.readStringAt(buffer, buffer.position);
 			stageEffect.fps = buffer.readUnsignedInt();
 			stageEffect.data = ByteArrayUtil.readStringAt(buffer, buffer.position);
 			deserializeEffectTemplates(buffer, stageEffect);
 			deserializeEffect(buffer, stageEffect);
-			
-			return stageEffect;
 		}
 		
 		private function deserializeEffectTemplates(buffer:ByteArray, stageEffect:StageEffectData):void

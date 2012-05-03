@@ -2,73 +2,39 @@ package com.yheng.xianyuan.effectEditor.persistence
 {
 	import com.codeTooth.actionscript.lang.exceptions.NullPointerException;
 	import com.codeTooth.actionscript.lang.utils.ByteArrayUtil;
-	import com.yheng.xianyuan.effectEditor.command.AddEffectTemplateCommandData;
-	import com.yheng.xianyuan.effectEditor.command.CommandID;
-	import com.yheng.xianyuan.effectEditor.command.ContainsEffectTemplateCommandData;
-	import com.yheng.xianyuan.effectEditor.core.Mediator;
+	import com.yheng.xianyuan.effectEditor.data.EffectTemplateData;
 	
 	import flash.utils.ByteArray;
-	
-	import mx.controls.Alert;
 
 	public class LibraryDeserialize
 	{
-		private var _numEffectTemplates:uint = 0;
-		
-		private var _effectTemplateIndex:int = 0;
-		
-		private var _buffer:ByteArray = null;
-		
-		private var _completeCallback:Function = null;
-		
-		public function deserialize(buffer:ByteArray, completeCallback:Function = null):void
+		public function deserialize(buffer:ByteArray, effectTemplates:Vector.<EffectTemplateData>):void
 		{
 			if(buffer == null)
 			{
 				throw new NullPointerException("Null input buffer parameter.");
 			}
-			_buffer = buffer;
-			_completeCallback = completeCallback;
-			_effectTemplateIndex = 0;
-			
-			// version
-			buffer.readUnsignedInt();
-			
-			_numEffectTemplates = buffer.readUnsignedInt();
-			deserializeEffectTemplateCompleteCallback();
-		}
-		
-		private function deserializeEffectTemplateCompleteCallback():void
-		{
-			if(_effectTemplateIndex++ >= _numEffectTemplates)
+			if(effectTemplates == null)
 			{
-				if(_completeCallback != null)
-				{
-					_completeCallback();
-				}
+				throw new NullPointerException("Null input effectTemplates parameter.");
 			}
-			else
+			
+			var version:uint = buffer.readUnsignedInt();
+			var numEffectTmpls:uint = buffer.readUnsignedInt();
+			for (var i:int = 0; i < numEffectTmpls; i++) 
 			{
-				deserializeEffectTemplate(_buffer);
+				deserializeEffectTemplate(buffer, effectTemplates);
 			}
 		}
 		
-		private function deserializeEffectTemplate(buffer:ByteArray):void
+		private function deserializeEffectTemplate(buffer:ByteArray, effectTmpls:Vector.<EffectTemplateData>):void
 		{
 			var id:Number = buffer.readDouble();
 			var name:String = ByteArrayUtil.readStringAt(buffer, buffer.position);
 			var bytes:ByteArray = ByteArrayUtil.readByteArrayAt(buffer, buffer.position);
 			var sparrow:XML = new XML(ByteArrayUtil.readStringAt(buffer, buffer.position));
-			
-			if(Mediator.commands.executeCommand(CommandID.CONTAINS_EFFECT_TEMPLATE, new ContainsEffectTemplateCommandData(id)))
-			{
-				Alert.show("特效库中已经存在相同的特效\"" + name + "\"，id\"" + id + "\".");
-				deserializeEffectTemplateCompleteCallback();
-			}
-			else
-			{
-				Mediator.commands.executeCommand(CommandID.ADD_EFFECT_TEMPLATE, new AddEffectTemplateCommandData(id, name, bytes, sparrow, deserializeEffectTemplateCompleteCallback));
-			}
+			var tmpl:EffectTemplateData = new EffectTemplateData(id, name, null, bytes, sparrow);
+			effectTmpls.push(tmpl);
 		}
 	}
 }

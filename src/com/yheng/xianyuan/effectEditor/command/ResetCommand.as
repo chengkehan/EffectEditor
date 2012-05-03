@@ -20,6 +20,7 @@ package com.yheng.xianyuan.effectEditor.command
 			}
 			
 			Mediator.commands.executeCommand(CommandID.CLEAR_REFERENCE_OBJECT);
+			Mediator.data.effectEditor_internal::reset();
 		}
 	}
 }

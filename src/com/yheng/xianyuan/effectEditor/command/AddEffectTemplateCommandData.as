@@ -14,13 +14,16 @@ package com.yheng.xianyuan.effectEditor.command
 		
 		public var completeCallback:Function = null;
 		
-		public function AddEffectTemplateCommandData(effectTemplateID:Number, name:String, bytes:ByteArray, sparrow:XML, completeCallback:Function = null)
+		public var errorCallback:Function = null;
+		
+		public function AddEffectTemplateCommandData(effectTemplateID:Number, name:String, bytes:ByteArray, sparrow:XML, completeCallback:Function = null, errorCallback:Function = null)
 		{
 			this.effectTemplateID = effectTemplateID;
 			this.name = name;
 			this.bytes = bytes;
 			this.sparrow = sparrow;
 			this.completeCallback = completeCallback;
+			this.errorCallback = errorCallback;
 		}
 	}
 }
