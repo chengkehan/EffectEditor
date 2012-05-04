@@ -37,7 +37,7 @@ package com.yheng.xianyuan.effectEditor.util.effect
 		 * 
 		 * @return 已经存在指定的返回false
 		 */
-		public function setEffect(id:Number, bytes:ByteArray, completeCallback:Function):Boolean
+		public function addEffect(id:Number, bytes:ByteArray, completeCallback:Function):Boolean
 		{
 			if(containsEffect(id))
 			{
@@ -57,7 +57,7 @@ package com.yheng.xianyuan.effectEditor.util.effect
 		 * 
 		 * @return 不存在指定的返回false
 		 */
-		public function clearEffect(id:Number):Boolean
+		public function removeEffect(id:Number):Boolean
 		{
 			if(containsEffect(id))
 			{
