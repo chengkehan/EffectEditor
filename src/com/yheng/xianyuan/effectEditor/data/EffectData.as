@@ -25,14 +25,19 @@ package com.yheng.xianyuan.effectEditor.data
 		private var _origionY:int = 0;
 		
 		// 色彩转换
-		private var _a:Number = 100;
-		private var _r:Number = 100;
-		private var _g:Number = 100;
-		private var _b:Number = 100;
+		private var _a:Number = 1;
+		private var _r:Number = 1;
+		private var _g:Number = 1;
+		private var _b:Number = 1;
 		private var _aa:Number = 0;
 		private var _ar:Number = 0;
 		private var _ag:Number = 0;
 		private var _ab:Number = 0;
+		private var _cr:Number = 0;
+		private var _cg:Number = 0;
+		private var _cb:Number = 0;
+		private var _ca:Number = 100;
+		private var _l:Number = 0;
 		
 		// 色彩滤镜
 		private var _v1:Number = 0;
@@ -42,7 +47,10 @@ package com.yheng.xianyuan.effectEditor.data
 		
 		public function EffectData(
 			id:Number, templateID:Number, origionX:int = 0, origionY:int = 0, emptyFramesPrefix:int = 0, emptyFramesSuffix:int = 0, 
-			a:Number = 100, r:Number = 100, g:Number = 100, b:Number = 100, aa:Number = 0, ar:Number = 0, ag:Number = 0, ab:Number = 0, v1:Number = 0, v2:Number = 0, v3:Number = 0, v4:Number = 0
+			a:Number = 1, r:Number = 1, g:Number = 1, b:Number = 1, 
+			aa:Number = 0, ar:Number = 0, ag:Number = 0, ab:Number = 0, 
+			ca:Number = 100, cr:Number = 0, cg:Number = 0, cb:Number = 0, l:Number = 0, 
+			v1:Number = 0, v2:Number = 0, v3:Number = 0, v4:Number = 0
 		)
 		{
 			_id = id;
@@ -58,6 +66,11 @@ package com.yheng.xianyuan.effectEditor.data
 			_ar = ar;
 			_ag = ag;
 			_ab = ab;
+			_ca = ca;
+			_cr = cr;
+			_cg = cg;
+			_cb = cb;
+			_l = l;
 			_v1 = v1;
 			_v2 = v2;
 			_v3 = v3;
@@ -127,6 +140,31 @@ package com.yheng.xianyuan.effectEditor.data
 		public function get ab():Number
 		{
 			return _ab;	
+		}
+		
+		public function get ca():Number
+		{
+			return _ca;	
+		}
+		
+		public function get cr():Number
+		{
+			return _cr;
+		}
+		
+		public function get cg():Number
+		{
+			return _cg;
+		}
+		
+		public function get cb():Number
+		{
+			return _cb;	
+		}
+		
+		public function get l():Number
+		{
+			return _l;
 		}
 		
 		public function get v1():Number
@@ -207,6 +245,31 @@ package com.yheng.xianyuan.effectEditor.data
 		effectEditor_internal function setAB(value:Number):void
 		{
 			_ab = value;
+		}
+		
+		effectEditor_internal function setCA(value:Number):void
+		{
+			_ca = value;
+		}
+		
+		effectEditor_internal function setCR(value:Number):void
+		{
+			_cr = value;
+		}
+		
+		effectEditor_internal function setCG(value:Number):void
+		{
+			_cg = value;
+		}
+		
+		effectEditor_internal function setCB(value:Number):void
+		{
+			_cb = value;
+		}
+		
+		effectEditor_internal function setL(value:Number):void
+		{
+			_l = value;
 		}
 		
 		effectEditor_internal function setV1(value:Number):void

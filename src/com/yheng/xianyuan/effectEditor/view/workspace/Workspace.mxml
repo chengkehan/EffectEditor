@@ -457,7 +457,7 @@
 			private function setEffectColorTransform(data:SetEffectColorTransformNotifyData):void
 			{
 				var effect:Effect = getEffect(data.effect.id);
-				effect.transform.colorTransform = new ColorTransform(
+				effect.getAction().transform.colorTransform = new ColorTransform(
 					data.effect.r, data.effect.g, data.effect.b,data.effect.a, data.effect.ar, data.effect.ag, data.effect.ab, data.effect.aa
 				);
 			}
@@ -465,7 +465,7 @@
 			private function setEffectColorFilter(data:SetEffectColorFilterNotifyData):void
 			{
 				var effect:Effect = getEffect(data.effect.id);
-				effect.filters = [new ColorMatrixFilter(MultiColorMatrixFilterProxy.createMultColorMatrix(
+				effect.getAction().filters = [new ColorMatrixFilter(MultiColorMatrixFilterProxy.createMultColorMatrix(
 					data.effect.v1, data.effect.v2, data.effect.v3, data.effect.v4
 				))];
 			}

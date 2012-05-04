@@ -30,6 +30,11 @@ package com.yheng.xianyuan.effectEditor.command
 			effect.setAR(input.ar);
 			effect.setAG(input.ag);
 			effect.setAB(input.ab);
+			effect.setCA(input.ca);
+			effect.setCR(input.cr);
+			effect.setCG(input.cg);
+			effect.setCB(input.cb);
+			effect.setL(input.l);
 			
 			Mediator.subjects.notifySubject(SubjectID.SET_EFFECT_COLOR_TRANSFORM, new SetEffectColorTransformNotifyData(effect));
 		}

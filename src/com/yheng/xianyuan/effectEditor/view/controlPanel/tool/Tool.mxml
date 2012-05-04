@@ -152,9 +152,31 @@
 			{
 				_selectEffectID = data.effectID;
 				var effectData:EffectData = Mediator.commands.executeCommand(CommandID.GET_EFFECT, new GetEffectCommandData(data.effectID));
+				
 				framesInput.text = String(Mediator.clipsDataManager.getClipsData(effectData.templateID).length);
 				emptyFramesPrefixInput.text = String(effectData.emptyFramesPrefix);
 				emptyFramesSuffixInput.text = String(effectData.emptyFramesSuffix);
+				
+				v1 = effectData.v1;
+				v2 = effectData.v2;
+				v3 = effectData.v3;
+				v4 = effectData.v4;
+				
+				r = 100 + effectData.cr * effectData.ca / 255;
+				g = 100 + effectData.cg * effectData.ca / 255;
+				b = 100 + effectData.cb * effectData.ca / 255;
+				a = effectData.a * 100;
+				ar = effectData.ar;
+				ag = effectData.ag;
+				ab = effectData.ab;
+				aa = effectData.aa;
+				ca = effectData.ca;
+				cr = effectData.cr;
+				cg = effectData.cg;
+				cb = effectData.cb;
+				l = effectData.l;
+				lSlider.value = effectData.l;
+				lNS.value = effectData.l;
 			}
 			private function unselectEffect():void
 			{
@@ -289,6 +311,15 @@
 				{
 					return;
 				}
+				
+				v1 = 0;
+				v2 = 0;
+				v3 = 0;
+				v4 = 0;
+				
+				Mediator.commands.executeCommand(CommandID.SET_EFFECT_COLOR_FILTER, new SetEffectColorFilterCommandData(
+					_selectEffectID, 0, 0, 0, 0
+				));
 			}
 			
 			[Bindable]
@@ -339,7 +370,7 @@
 				}
 				
 				Mediator.commands.executeCommand(CommandID.SET_EFFECT_COLOR_TRANSFORM, new SetEffectColorTransformCommandData(
-					_selectEffectID, r / 100, g / 100, b / 100, a / 100, ar, ag, ab, aa
+					_selectEffectID, r / 100, g / 100, b / 100, a / 100, ar, ag, ab, aa, cr, cg, cb, ca, l
 				));
 			}
 			
@@ -349,6 +380,26 @@
 				{
 					return;
 				}
+				
+				r = 100;
+				g = 100;
+				b = 100;
+				a = 100;
+				ar = 0;
+				ag = 0;
+				ab = 0;
+				aa = 0;
+				ca = 100;
+				cr = 0;
+				cg = 0;
+				cb = 0;
+				l = 0;
+				lSlider.value = 0;
+				lNS.value = 0;
+				
+				Mediator.commands.executeCommand(CommandID.SET_EFFECT_COLOR_TRANSFORM, new SetEffectColorTransformCommandData(
+					_selectEffectID, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 100, 0
+				));
 			}
 			
 		]]>
@@ -411,9 +462,9 @@
 			<s:VGroup>
 				<s:HGroup verticalAlign="middle">
 					<s:Label text="颜色滤镜："/>
-					<s:Button label="重置" click="resetColorFilterHandler(event)"/>
+					<s:Button label="重置" click="resetColorTransformHandler(event)"/>
 				</s:HGroup>
-				<s:DropDownList id="ddl" width="200" selectedIndex="2" labelField="label" change="colorTransformTypeChangeHandle(event)">
+				<s:DropDownList id="ddl" width="200" selectedIndex="0" labelField="label" change="colorTransformTypeChangeHandle(event)">
 					<s:dataProvider>
 						<s:ArrayList>
 							<fx:Object label="亮度" value="light"/>
@@ -424,8 +475,8 @@
 				</s:DropDownList>
 				<s:Group includeIn="light" x="0" y="23" width="100%">
 					<s:Label x="4" y="5" text="亮度:"/>
-					<s:HSlider x="36" y="6" width="95" value="@{l}" minimum="-255" maximum="255" change="refreshCurrentTransformColor()"/>
-					<s:NumericStepper x="135" y="0" width="50" minimum="-255" maximum="255" value="@{l}" change="refreshCurrentTransformColor()"/>
+					<s:HSlider id="lSlider" x="36" y="6" width="95" value="@{l}" minimum="-255" maximum="255" change="refreshCurrentTransformColor()"/>
+					<s:NumericStepper id="lNS" x="135" y="0" width="50" minimum="-255" maximum="255" value="@{l}" change="refreshCurrentTransformColor()"/>
 					<s:Label x="188" y="5" text="%"/>
 				</s:Group>
 				<s:VGroup x="0" y="23" includeIn="color" gap="5">
@@ -476,7 +527,7 @@
 			<s:VGroup>
 				<s:HGroup verticalAlign="middle">
 					<s:Label text="颜色转换："/>
-					<s:Button label="重置" click="resetColorTransformHandler(event)"/>
+					<s:Button label="重置" click="resetColorFilterHandler(event)"/>
 				</s:HGroup>
 				<s:Group>
 					<s:Label x="4" y="5" text="亮度:"/>
