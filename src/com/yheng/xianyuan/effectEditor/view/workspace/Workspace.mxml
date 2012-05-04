@@ -19,6 +19,7 @@
 			import com.codeTooth.actionscript.interaction.selection.SimpleSelectionManager;
 			import com.codeTooth.actionscript.interaction.selection.SimpleSelectionManagerEvent;
 			import com.codeTooth.actionscript.lang.exceptions.IllegalOperationException;
+			import com.codeTooth.actionscript.lang.exceptions.NoSuchObjectException;
 			import com.codeTooth.actionscript.patterns.subject.INofityData;
 			import com.yheng.xianyuan.effectEditor.command.CommandID;
 			import com.yheng.xianyuan.effectEditor.command.MoveReferenceObjectCommandData;
@@ -31,12 +32,18 @@
 			import com.yheng.xianyuan.effectEditor.subject.RemoveEffectNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SelectEffectNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SetAssistantPointVisibleNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SetEffectColorFilterNotifyData;
+			import com.yheng.xianyuan.effectEditor.subject.SetEffectColorTransformNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SetEffectEmptyFramesNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SetFPSNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SetPlayingNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SetReferenceObjectNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SetWorkspaceColorNotifyData;
 			import com.yheng.xianyuan.effectEditor.subject.SubjectID;
+			
+			import flash.filters.ColorMatrixFilter;
+			
+			import ghostcat.display.filter.MultiColorMatrixFilterProxy;
 			
 			import mx.controls.Alert;
 			import mx.events.ResizeEvent;
@@ -114,6 +121,18 @@
 						setPlaying(SetPlayingNotifyData(data))
 						break;
 					}
+						
+					case SubjectID.SET_EFFECT_COLOR_TRANSFORM:
+					{
+						setEffectColorTransform(SetEffectColorTransformNotifyData(data));
+						break;
+					}
+						
+					case SubjectID.SET_EFFECT_COLOR_FILTER:
+					{
+						setEffectColorFilter(SetEffectColorFilterNotifyData(data))
+						break;
+					}
 					
 					default:
 					{
@@ -168,6 +187,8 @@
 				Mediator.subjects.followSubject(this, SubjectID.CLEAR_REFERENCE_OBJECT);
 				Mediator.subjects.followSubject(this, SubjectID.MOVE_REFERENCE_OBJECT);
 				Mediator.subjects.followSubject(this, SubjectID.SET_PLAYING);
+				Mediator.subjects.followSubject(this, SubjectID.SET_EFFECT_COLOR_TRANSFORM);
+				Mediator.subjects.followSubject(this, SubjectID.SET_EFFECT_COLOR_FILTER);
 				
 				stage.frameRate = 60;
 			}
@@ -431,6 +452,36 @@
 					}
 				}
 				_player.running = data.playing;
+			}
+			
+			private function setEffectColorTransform(data:SetEffectColorTransformNotifyData):void
+			{
+				var effect:Effect = getEffect(data.effect.id);
+				effect.transform.colorTransform = new ColorTransform(
+					data.effect.r, data.effect.g, data.effect.b,data.effect.a, data.effect.ar, data.effect.ag, data.effect.ab, data.effect.aa
+				);
+			}
+			
+			private function setEffectColorFilter(data:SetEffectColorFilterNotifyData):void
+			{
+				var effect:Effect = getEffect(data.effect.id);
+				effect.filters = [new ColorMatrixFilter(MultiColorMatrixFilterProxy.createMultColorMatrix(
+					data.effect.v1, data.effect.v2, data.effect.v3, data.effect.v4
+				))];
+			}
+			
+			private function getEffect(id:Number):Effect
+			{
+				for each(var effect:Effect in _effects)
+				{
+					if(effect.id == id)
+					{
+						return effect;
+					}
+				}
+				
+				throw new NoSuchObjectException();
+				return null;
 			}
 			
 			//------------------------------------------------------------------------------------------------------------------------------

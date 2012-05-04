@@ -15,6 +15,8 @@ package com.yheng.xianyuan.effectEditor.command
 		public static const GET_EFFECT:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("getEffect", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const SET_EFFECT_ORIGION:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("setEffectOrigion", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const SET_EFFECT_EMPTY_FRAMES:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("setEffectEmptyFrames", com.yheng.xianyuan.effectEditor.command.CommandID);
+		public static const SET_EFFECT_COLOR_TRANSFORM:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("setEffectColorTransform", com.yheng.xianyuan.effectEditor.command.CommandID);
+		public static const SET_EFFECT_COLOR_FILTER:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("setEffectColorFilter", com.yheng.xianyuan.effectEditor.command.CommandID);
 		
 		public static const SET_WORKSPACE_COLOR:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("setWorkspaceColor", com.yheng.xianyuan.effectEditor.command.CommandID);
 		public static const GET_WORKSPACE_COLOR:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("getWorkspaceColor", com.yheng.xianyuan.effectEditor.command.CommandID);

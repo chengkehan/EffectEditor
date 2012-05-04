@@ -17,6 +17,8 @@ package com.yheng.xianyuan.effectEditor.command
 				new CommandItem(CommandID.REMOVE_EFFECT, new RemoveEffectCommand()), 
 				new CommandItem(CommandID.GET_EFFECT, new GetEffectCommand()), 
 				new CommandItem(CommandID.SET_EFFECT_ORIGION, new SetEffectOrigionCommand()), 
+				new CommandItem(CommandID.SET_EFFECT_COLOR_TRANSFORM, new SetEffectColorTransformCommand()), 
+				new CommandItem(CommandID.SET_EFFECT_COLOR_FILTER, new SetEffectColorFilterCommand()), 
 				new CommandItem(CommandID.SET_WORKSPACE_COLOR, new SetWorkspaceColorCommand()), 
 				new CommandItem(CommandID.GET_WORKSPACE_COLOR, new GetWorkspaceColorCommand()), 
 				new CommandItem(CommandID.GET_PLAYING, new GetPlayingCommand()), 
