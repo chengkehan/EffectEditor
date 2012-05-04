@@ -45,5 +45,6 @@ package com.yheng.xianyuan.effectEditor.command
 		public static const MOVE_REFERENCE_OBJECT:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("moveReferenceObject", com.yheng.xianyuan.effectEditor.command.CommandID);
 		
 		public static const OUTPUT_STAGE_EFFECT:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("outputEffect", com.yheng.xianyuan.effectEditor.command.CommandID);
+		public static const OUTPUT_CODE:com.yheng.xianyuan.effectEditor.command.CommandID = createInstance("outputCode", com.yheng.xianyuan.effectEditor.command.CommandID);
 	}
 }

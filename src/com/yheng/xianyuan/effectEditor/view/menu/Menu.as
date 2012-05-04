@@ -33,6 +33,7 @@ package com.yheng.xianyuan.effectEditor.view.menu
 							<item label="导出">
 								<item label="特效库..." onClick="saveLibrary"/>
 								<item label="舞台特效..." onClick="outputStageEffect"/>
+								<item label="动画控制代码..." onClick="outputCode"/>
 							</item>
 							<item label="导入">
 								<item label="特效库..." onClick="openLibrary"/>
@@ -90,6 +91,11 @@ package com.yheng.xianyuan.effectEditor.view.menu
 		public function mergeStageEffect(event:Event):void
 		{
 			Mediator.subjects.notifySubject(SubjectID.SHOW_MERGE_STAGE_EFFECT_WINDOW);
+		}
+		
+		public function outputCode(event:Event):void
+		{
+			Mediator.commands.executeCommand(CommandID.OUTPUT_CODE);
 		}
 	}
 }
