@@ -4,6 +4,7 @@ package com.yheng.xianyuan.effectEditor.util.effect
 	import com.codeTooth.actionscript.game.action.ActionData;
 	import com.codeTooth.actionscript.game.action.ActionGroup;
 	import com.codeTooth.actionscript.game.action.ClipsDataManager;
+	import com.codeTooth.actionscript.game.action.IAction;
 	import com.codeTooth.actionscript.lang.utils.destroy.DestroyUtil;
 	import com.codeTooth.actionscript.lang.utils.destroy.IDestroy;
 	import com.yheng.xianyuan.effectEditor.data.DefaultValue;
@@ -12,6 +13,7 @@ package com.yheng.xianyuan.effectEditor.util.effect
 	
 	import flash.filters.ColorMatrixFilter;
 	import flash.geom.ColorTransform;
+	import flash.sampler.startSampling;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	
@@ -100,7 +102,7 @@ package com.yheng.xianyuan.effectEditor.util.effect
 		 * 
 		 * @return 没有找到返回null
 		 */
-		public function getAction(id:Number, name:String):ActionGroup
+		public function getAction(id:Number, name:String):IAction
 		{
 			if(containsEffect(id))
 			{
@@ -119,36 +121,32 @@ package com.yheng.xianyuan.effectEditor.util.effect
 							actionsData.push(actionData);
 						}
 						
-						var actionGroup:ActionGroup = new ActionGroup(actionsData);
-						actionGroup.fps = stageEffect.fps;
+						var iAction:IAction = null;
 						
-						if(actionGroup.getActoins() != null)
+						if(actionsData.length == 1)
 						{
+							var action:Action = new Action(actionsData[0]);
+							action.fps = stageEffect.fps;
+							setActionEffectProps(action, stageEffect.effects[0]);
+							
+							iAction = action;
+						}
+						else
+						{
+							var actionGroup:ActionGroup = new ActionGroup(actionsData);
+							actionGroup.fps = stageEffect.fps;
+							
 							var actions:Vector.<Action> = actionGroup.getActoins();
 							var numActions:uint = actions.length;
 							for (var i:int = 0; i < numActions; i++) 
 							{
-								effect = stageEffect.effects[i];
-								if(effect.v1 != _defaultValue.v1 || effect.v2 != _defaultValue.v2 || effect.v3 != _defaultValue.v3 || effect.v4 != _defaultValue.v4)
-								{
-									actions[i].filters = [new ColorMatrixFilter(MultiColorMatrixFilterProxy.createMultColorMatrix(
-										effect.v1, effect.v2, effect.v3, effect.v4
-									))];
-								}
-								if(effect.r != _defaultValue.r || effect.g != _defaultValue.g || effect.b != _defaultValue.b || effect.a != _defaultValue.a || 
-									effect.ar != _defaultValue.ar || effect.ag != _defaultValue.ag || effect.ab != _defaultValue.ab || effect.a != _defaultValue.a || 
-									effect.cr != _defaultValue.cr || effect.cg != _defaultValue.cg || effect.cb != _defaultValue.cb || effect.ca != _defaultValue.ca || 
-									effect.l != _defaultValue.l
-								)
-								{
-									actions[i].transform.colorTransform = new ColorTransform(
-										effect.r, effect.g, effect.b, effect.a, effect.ar, effect.ag, effect.ab, effect.aa
-									);
-								}
+								setActionEffectProps(actions[i], stageEffect.effects[i]);
 							}
+							
+							iAction = actionGroup;
 						}
 						
-						return actionGroup;
+						return iAction;
 					}
 				}
 				
@@ -157,6 +155,25 @@ package com.yheng.xianyuan.effectEditor.util.effect
 			else
 			{
 				return null;
+			}
+		}
+		private function setActionEffectProps(action:IAction, effect:EffectData):void
+		{
+			if(effect.v1 != _defaultValue.v1 || effect.v2 != _defaultValue.v2 || effect.v3 != _defaultValue.v3 || effect.v4 != _defaultValue.v4)
+			{
+				action.filters = [new ColorMatrixFilter(MultiColorMatrixFilterProxy.createMultColorMatrix(
+					effect.v1, effect.v2, effect.v3, effect.v4
+				))];
+			}
+			if(effect.r != _defaultValue.r || effect.g != _defaultValue.g || effect.b != _defaultValue.b || effect.a != _defaultValue.a || 
+				effect.ar != _defaultValue.ar || effect.ag != _defaultValue.ag || effect.ab != _defaultValue.ab || effect.a != _defaultValue.a || 
+				effect.cr != _defaultValue.cr || effect.cg != _defaultValue.cg || effect.cb != _defaultValue.cb || effect.ca != _defaultValue.ca || 
+				effect.l != _defaultValue.l
+			)
+			{
+				action.transform.colorTransform = new ColorTransform(
+					effect.r, effect.g, effect.b, effect.a, effect.ar, effect.ag, effect.ab, effect.aa
+				);
 			}
 		}
 		

@@ -25,6 +25,12 @@ package com.yheng.xianyuan.effectEditor.command
 		
 		public function execute(data:Object=null):*
 		{
+			if(Mediator.data.getEffectsData().length == 0)
+			{
+				Alert.show("没有舞台特效可以导出");
+				return;
+			}
+			
 			FileUtil.save(writeStream, exceptionCatcher, null, "保存导出的舞台特效文件");
 		}
 		
