@@ -1,15 +1,21 @@
 package com.yheng.xianyuan.effectEditor.util.effect
 {
+	import com.codeTooth.actionscript.game.action.Action;
 	import com.codeTooth.actionscript.game.action.ActionData;
 	import com.codeTooth.actionscript.game.action.ActionGroup;
 	import com.codeTooth.actionscript.game.action.ClipsDataManager;
 	import com.codeTooth.actionscript.lang.utils.destroy.DestroyUtil;
 	import com.codeTooth.actionscript.lang.utils.destroy.IDestroy;
+	import com.yheng.xianyuan.effectEditor.data.DefaultValue;
 	import com.yheng.xianyuan.effectEditor.data.EffectData;
 	import com.yheng.xianyuan.effectEditor.data.StageEffectData;
 	
+	import flash.filters.ColorMatrixFilter;
+	import flash.geom.ColorTransform;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
+	
+	import ghostcat.display.filter.MultiColorMatrixFilterProxy;
 
 	/**
 	 * 特效动画管理器
@@ -22,10 +28,13 @@ package com.yheng.xianyuan.effectEditor.util.effect
 		// 剪辑帧管理器
 		private var _clipsDataManager:ClipsDataManager = null;
 		
+		private var _defaultValue:DefaultValue = null;
+		
 		public function ActionEffectManager()
 		{
 			_actionEffects = new Dictionary();
 			_clipsDataManager = new ClipsDataManager();
+			_defaultValue = new DefaultValue();
 		}
 		
 		/**
@@ -112,6 +121,32 @@ package com.yheng.xianyuan.effectEditor.util.effect
 						
 						var actionGroup:ActionGroup = new ActionGroup(actionsData);
 						actionGroup.fps = stageEffect.fps;
+						
+						if(actionGroup.getActoins() != null)
+						{
+							var actions:Vector.<Action> = actionGroup.getActoins();
+							var numActions:uint = actions.length;
+							for (var i:int = 0; i < numActions; i++) 
+							{
+								effect = stageEffect.effects[i];
+								if(effect.v1 != _defaultValue.v1 || effect.v2 != _defaultValue.v2 || effect.v3 != _defaultValue.v3 || effect.v4 != _defaultValue.v4)
+								{
+									actions[i].filters = [new ColorMatrixFilter(MultiColorMatrixFilterProxy.createMultColorMatrix(
+										effect.v1, effect.v2, effect.v3, effect.v4
+									))];
+								}
+								if(effect.r != _defaultValue.r || effect.g != _defaultValue.g || effect.b != _defaultValue.b || effect.a != _defaultValue.a || 
+									effect.ar != _defaultValue.ar || effect.ag != _defaultValue.ag || effect.ab != _defaultValue.ab || effect.a != _defaultValue.a || 
+									effect.cr != _defaultValue.cr || effect.cg != _defaultValue.cg || effect.cb != _defaultValue.cb || effect.ca != _defaultValue.ca || 
+									effect.l != _defaultValue.l
+								)
+								{
+									actions[i].transform.colorTransform = new ColorTransform(
+										effect.r, effect.g, effect.b, effect.a, effect.ar, effect.ag, effect.ab, effect.aa
+									);
+								}
+							}
+						}
 						
 						return actionGroup;
 					}

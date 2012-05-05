@@ -458,7 +458,7 @@
 			{
 				var effect:Effect = getEffect(data.effect.id);
 				effect.getAction().transform.colorTransform = new ColorTransform(
-					data.effect.r, data.effect.g, data.effect.b,data.effect.a, data.effect.ar, data.effect.ag, data.effect.ab, data.effect.aa
+					data.effect.r, data.effect.g, data.effect.b, data.effect.a, data.effect.ar, data.effect.ag, data.effect.ab, data.effect.aa
 				);
 			}
 			
