@@ -22,7 +22,8 @@ package com.yheng.xianyuan.effectEditor.command
 			effectID:Number, 
 			r:Number, g:Number, b:Number, a:Number, 
 			ar:Number, ag:Number, ab:Number, aa:Number, 
-			cr:Number, cg:Number, cb:Number, ca:Number, l:Number
+			cr:Number, cg:Number, cb:Number, ca:Number, 
+			l:Number
 		)
 		{
 			this.effectID = effectID;

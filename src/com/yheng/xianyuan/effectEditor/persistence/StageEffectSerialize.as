@@ -79,6 +79,28 @@ package com.yheng.xianyuan.effectEditor.persistence
 				buffer.writeInt(effect.origionY);
 				buffer.writeInt(effect.emptyFramesPrefix);
 				buffer.writeInt(effect.emptyFramesSuffix);
+				
+				buffer.writeDouble(effect.a);
+				buffer.writeDouble(effect.r);
+				buffer.writeDouble(effect.g);
+				buffer.writeDouble(effect.b);
+				
+				buffer.writeDouble(effect.aa);
+				buffer.writeDouble(effect.ar);
+				buffer.writeDouble(effect.ag);
+				buffer.writeDouble(effect.ab);
+				
+				buffer.writeDouble(effect.ca);
+				buffer.writeDouble(effect.cr);
+				buffer.writeDouble(effect.cg);
+				buffer.writeDouble(effect.cb);
+				
+				buffer.writeDouble(effect.l);
+				
+				buffer.writeDouble(effect.v1);
+				buffer.writeDouble(effect.v2);
+				buffer.writeDouble(effect.v3);
+				buffer.writeDouble(effect.v4);
 			}
 		}
 		

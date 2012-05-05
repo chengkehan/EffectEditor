@@ -29,14 +29,17 @@ package com.yheng.xianyuan.effectEditor.data
 		private var _r:Number = 1;
 		private var _g:Number = 1;
 		private var _b:Number = 1;
+		
 		private var _aa:Number = 0;
 		private var _ar:Number = 0;
 		private var _ag:Number = 0;
 		private var _ab:Number = 0;
+		
 		private var _cr:Number = 0;
 		private var _cg:Number = 0;
 		private var _cb:Number = 0;
 		private var _ca:Number = 100;
+		
 		private var _l:Number = 0;
 		
 		// 色彩滤镜

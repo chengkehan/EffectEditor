@@ -7,6 +7,7 @@ package com.yheng.xianyuan.effectEditor.core
 	import com.codeTooth.actionscript.patterns.subject.registerSubjectID;
 	import com.yheng.xianyuan.effectEditor.command.Commands;
 	import com.yheng.xianyuan.effectEditor.data.Data;
+	import com.yheng.xianyuan.effectEditor.data.DefaultValue;
 	import com.yheng.xianyuan.effectEditor.subject.SubjectID;
 	import com.yheng.xianyuan.effectEditor.view.window.Windows;
 	
@@ -14,6 +15,8 @@ package com.yheng.xianyuan.effectEditor.core
 
 	public class Mediator
 	{
+		public static const defaultValue:DefaultValue = new DefaultValue();
+		
 		public static const subjects:Subjects = new Subjects();
 		
 		public static const data:Data = new Data();

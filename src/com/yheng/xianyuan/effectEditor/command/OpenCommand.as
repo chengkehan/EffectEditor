@@ -94,7 +94,13 @@ package com.yheng.xianyuan.effectEditor.command
 			{
 				for each(var effect:EffectData in _dataCache.getEffectsData())
 				{
-					Mediator.commands.executeCommand(CommandID.ADD_EFFECT, new AddEffectCommandData(effect.templateID, effect.id, effect.origionX, effect.origionY, effect.emptyFramesPrefix, effect.emptyFramesSuffix));
+					Mediator.commands.executeCommand(CommandID.ADD_EFFECT, new AddEffectCommandData(
+						effect.templateID, effect.id, effect.origionX, effect.origionY, effect.emptyFramesPrefix, effect.emptyFramesSuffix, 
+						effect.a, effect.r, effect.g, effect.b, 
+						effect.aa, effect.ar, effect.ag, effect.ab, 
+						effect.ca, effect.cr, effect.cg, effect.cb, effect.l, 
+						effect.v1, effect.v2, effect.v3, effect.v4
+					));
 				}
 			}
 			else

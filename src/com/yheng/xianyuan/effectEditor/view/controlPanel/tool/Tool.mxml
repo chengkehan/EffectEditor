@@ -287,13 +287,13 @@
 			}
 			
 			[Bindable]
-			public var v1:int = 0;
+			public var v1:int = Mediator.defaultValue.v1;
 			[Bindable]
-			public var v2:int = 0;
+			public var v2:int = Mediator.defaultValue.v2;
 			[Bindable]
-			public var v3:int = 0;
+			public var v3:int = Mediator.defaultValue.v3;
 			[Bindable]
-			public var v4:int = 0;
+			public var v4:int = Mediator.defaultValue.v4;
 			public function refreshCurrentFilterColor():void
 			{
 				if(_selectEffectID == -1)
@@ -312,32 +312,33 @@
 					return;
 				}
 				
-				v1 = 0;
-				v2 = 0;
-				v3 = 0;
-				v4 = 0;
+				v1 = Mediator.defaultValue.v1;
+				v2 = Mediator.defaultValue.v2;
+				v3 = Mediator.defaultValue.v3;
+				v4 = Mediator.defaultValue.v4;
 				
 				Mediator.commands.executeCommand(CommandID.SET_EFFECT_COLOR_FILTER, new SetEffectColorFilterCommandData(
-					_selectEffectID, 0, 0, 0, 0
+					_selectEffectID, 
+					Mediator.defaultValue.v1, Mediator.defaultValue.v2, Mediator.defaultValue.v3, Mediator.defaultValue.v4
 				));
 			}
 			
 			[Bindable]
-			public var a:int = 100;
+			public var a:int = Mediator.defaultValue.a_percent;
 			[Bindable]
-			public var r:int = 100;
+			public var r:int = Mediator.defaultValue.r_percent;
 			[Bindable]
-			public var g:int = 100;
+			public var g:int = Mediator.defaultValue.g_percent;
 			[Bindable]
-			public var b:int = 100;
+			public var b:int = Mediator.defaultValue.b_percent;
 			[Bindable]
-			public var aa:int;
+			public var aa:int = Mediator.defaultValue.aa;
 			[Bindable]
-			public var ar:int;
+			public var ar:int = Mediator.defaultValue.ar;
 			[Bindable]
-			public var ag:int;
+			public var ag:int = Mediator.defaultValue.ag;
 			[Bindable]
-			public var ab:int;
+			public var ab:int = Mediator.defaultValue.ab;
 			[Bindable]
 			public function get l():int
 			{
@@ -348,13 +349,13 @@
 				ar = ag = ab = value;
 			}
 			[Bindable]
-			public var ca:int = 100;
+			public var ca:int = Mediator.defaultValue.ca;
 			[Bindable]
-			public var cr:int
+			public var cr:int = Mediator.defaultValue.cr;
 			[Bindable]
-			public var cg:int
+			public var cg:int = Mediator.defaultValue.cg;
 			[Bindable]
-			public var cb:int
+			public var cb:int = Mediator.defaultValue.cb;
 			public function refreshCurrentTransformColor(useColorPanelData:Boolean = false):void
 			{
 				if(_selectEffectID == -1)
@@ -381,24 +382,28 @@
 					return;
 				}
 				
-				r = 100;
-				g = 100;
-				b = 100;
-				a = 100;
-				ar = 0;
-				ag = 0;
-				ab = 0;
-				aa = 0;
-				ca = 100;
-				cr = 0;
-				cg = 0;
-				cb = 0;
-				l = 0;
-				lSlider.value = 0;
-				lNS.value = 0;
+				r = Mediator.defaultValue.r_percent;
+				g = Mediator.defaultValue.g_percent;
+				b = Mediator.defaultValue.b_percent;
+				a = Mediator.defaultValue.a_percent;
+				ar = Mediator.defaultValue.ar;
+				ag = Mediator.defaultValue.ag;
+				ab = Mediator.defaultValue.ab;
+				aa = Mediator.defaultValue.aa;
+				ca = Mediator.defaultValue.ca;
+				cr = Mediator.defaultValue.cr;
+				cg = Mediator.defaultValue.cg;
+				cb = Mediator.defaultValue.cb;
+				l = Mediator.defaultValue.l;
+				lSlider.value = Mediator.defaultValue.l;
+				lNS.value = Mediator.defaultValue.l;
 				
 				Mediator.commands.executeCommand(CommandID.SET_EFFECT_COLOR_TRANSFORM, new SetEffectColorTransformCommandData(
-					_selectEffectID, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 100, 0
+					_selectEffectID, 
+					Mediator.defaultValue.r, Mediator.defaultValue.g, Mediator.defaultValue.b, Mediator.defaultValue.a, 
+					Mediator.defaultValue.ar, Mediator.defaultValue.ag, Mediator.defaultValue.ab, Mediator.defaultValue.aa, 
+					Mediator.defaultValue.cr, Mediator.defaultValue.cg, Mediator.defaultValue.cb, Mediator.defaultValue.ca, 
+					Mediator.defaultValue.l
 				));
 			}
 			

@@ -60,7 +60,30 @@ package com.yheng.xianyuan.effectEditor.persistence
 				var origionY:int = buffer.readInt();
 				var prefix:int = buffer.readInt();
 				var suffix:int = buffer.readInt();
-				var effect:EffectData = new EffectData(id, templateID, origionX, origionY, prefix, suffix);
+				
+				var a:Number = buffer.readDouble();
+				var r:Number = buffer.readDouble();
+				var g:Number = buffer.readDouble();
+				var b:Number = buffer.readDouble();
+				
+				var aa:Number = buffer.readDouble();
+				var ar:Number = buffer.readDouble();
+				var ag:Number = buffer.readDouble();
+				var ab:Number = buffer.readDouble();
+				
+				var ca:Number = buffer.readDouble();
+				var cr:Number = buffer.readDouble();
+				var cg:Number = buffer.readDouble();
+				var cb:Number = buffer.readDouble();
+				
+				var l:Number = buffer.readDouble();
+				
+				var v1:Number = buffer.readDouble();
+				var v2:Number = buffer.readDouble();
+				var v3:Number = buffer.readDouble();
+				var v4:Number = buffer.readDouble();
+				
+				var effect:EffectData = new EffectData(id, templateID, origionX, origionY, prefix, suffix, a, r, g, b, aa, ar, ag, ab, ca, cr, cg, cb, l, v1, v2, v3, v4);
 				stageEffect.effects.push(effect);
 			}
 		}
