@@ -1,11 +1,13 @@
 package com.yheng.xianyuan.effectEditor.core
 {
+	import com.codeTooth.actionscript.command.Commands;
+	import com.codeTooth.actionscript.command.registerCommandID;
 	import com.codeTooth.actionscript.game.action.ClipsDataManager;
 	import com.codeTooth.actionscript.lang.exceptions.NullPointerException;
 	import com.codeTooth.actionscript.lang.utils.newLoop.MainLoop;
 	import com.codeTooth.actionscript.patterns.subject.Subjects;
 	import com.codeTooth.actionscript.patterns.subject.registerSubjectID;
-	import com.yheng.xianyuan.effectEditor.command.Commands;
+	import com.yheng.xianyuan.effectEditor.command.CommandID;
 	import com.yheng.xianyuan.effectEditor.data.Data;
 	import com.yheng.xianyuan.effectEditor.data.DefaultValue;
 	import com.yheng.xianyuan.effectEditor.subject.SubjectID;
@@ -47,6 +49,7 @@ package com.yheng.xianyuan.effectEditor.core
 			_initialized = true;
 			_document = document;
 			registerSubjectID(Vector.<Class>([SubjectID]), subjects);
+			registerCommandID(Vector.<Class>([CommandID]), commands);
 			_windows.initialize(_document);
 		}
 		
